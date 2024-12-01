@@ -11,11 +11,7 @@ content.split('\n').map(pair => pair.split("   ").map(num => parseInt(num))).for
     });
 });
 
-//console.log(lists);
-
 const listLength = lists[0].length;
-
-//console.log(listLength);
 
 var similarity = 0;
 
