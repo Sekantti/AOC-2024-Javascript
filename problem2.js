@@ -23,3 +23,5 @@ for (var i = 0; i < reportsLength; i++) {
         }
     }
 }*/
+
+//console.log(safe);
