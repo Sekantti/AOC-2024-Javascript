@@ -11,11 +11,9 @@ content.split('\n').map(pair => pair.split("   ").map(num => parseInt(num))).for
     });
 });
 
-const listLength = lists[0].length;
-
 var similarity = 0;
 
-lists[0].forEach((value, i) => {
+lists[0].forEach(value => {
     var multiplier = 0;
     lists[1].forEach(otherValue => {
         if (value == otherValue) {
