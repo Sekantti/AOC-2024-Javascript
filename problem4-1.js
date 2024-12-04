@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 
-const filePath = 'problem4-example.in';
+const filePath = 'problem4.in';
 
 const content = [];
 readFileSync(filePath, 'utf-8').split('\n').forEach((val, i) => {
