@@ -40,10 +40,10 @@ function length(array) {
 
 function xmasSum(array) {
     var sum = 0;
-    array.forEach((val) => {
-        if (val.length >= 4) {
-            sum += length(val.match(regeXmas));
-            sum += length(val.match(regexSamx));
+    array.forEach((subArray) => {
+        if (subArray.length >= 4) {
+            sum += length(subArray.match(regeXmas));
+            sum += length(subArray.match(regexSamx));
         }
     });
     return sum;
