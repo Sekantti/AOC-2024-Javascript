@@ -1,13 +1,11 @@
 import { readFileSync } from 'fs';
 
-const filePath = 'problem4.in';
+const filePath = 'problem4-example.in';
 
 const content = [];
-
 readFileSync(filePath, 'utf-8').split('\n').forEach((val, i) => {
     content[i] = val.split('');
 });
-
 
 const searchSpaceHorizontal = content.map(subArray => subArray.join(''));
 const searchSpaceVertical = content[0].map((_, colIndex) => content.map(row => row[colIndex]).join(''));
@@ -29,8 +27,6 @@ for (var i = 0; i < content.length; i++) {
         searchSpaceDiagTLBR[diagIndex] = (searchSpaceDiagTLBR[diagIndex] || '') + content[i][j];
     }
 }
-
-console.log(searchSpaceDiagTLBR);
 
 var sum = 0;
 
