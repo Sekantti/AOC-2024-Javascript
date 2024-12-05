@@ -7,7 +7,21 @@ const rules = readFileSync(filePathRules, 'utf-8').split('\n').map(pages => page
 const updates = readFileSync(filePathUpdates, 'utf-8').split('\n').map(pages => pages.split(',').map(number => parseInt(number)));
 
 const rulesNumber = rules.length;
+const unorderedUpdates = [];
 let pageNumSum = 0;
+
+function isOrdered(arr) {
+    for (let i = 0; i < rulesNumber; i++) {
+         const firstPageIndex = arr.indexOf(rules[i][0]);
+         const secondPageIndex = arr.indexOf(rules[i][1]);
+         if (firstPageIndex != -1 && secondPageIndex != -1 && firstPageIndex > secondPageIndex) {
+            return false;
+         }
+         if (i == rulesNumber -1) {
+            return true;
+         }
+    }
+}
 
 function arraymove(arr, fromIndex, toIndex) {
     var element = arr[fromIndex];
@@ -16,19 +30,25 @@ function arraymove(arr, fromIndex, toIndex) {
 }
 
 updates.forEach((val) => {
-    let incorrect = false;
-    for (let i = 0; i < rulesNumber; i++) {
-        const firstPageIndex = val.indexOf(rules[i][0]);
-        const secondPageIndex = val.indexOf(rules[i][1]);
-        if (firstPageIndex != -1 && secondPageIndex != -1 && firstPageIndex > secondPageIndex) {
-            arraymove(val, secondPageIndex, firstPageIndex);
-            //val.splice(secondPageIndex,1);
-            //val.splice(firstPageIndex,0,val[secondPageIndex])
-            incorrect = true;
-        }
-        console.log
-        if (i == rulesNumber-1 && incorrect == true) {
-            pageNumSum+=val[Math.floor(val.length/2)];
+    let i = unorderedUpdates.length
+    if (!isOrdered(val)) {
+        unorderedUpdates[i] = val;
+    }
+});
+
+unorderedUpdates.forEach((val) => {
+    while (!isOrdered(val)) {
+        for (let i = 0; i < rulesNumber; i++) {
+            const firstPageIndex = val.indexOf(rules[i][0]);
+            const secondPageIndex = val.indexOf(rules[i][1]);
+            if (firstPageIndex != -1 && secondPageIndex != -1 && firstPageIndex > secondPageIndex) {
+                arraymove(val, secondPageIndex, firstPageIndex);
+                //val.splice(secondPageIndex,1);
+                //val.splice(firstPageIndex,0,val[secondPageIndex])
+            }
+            if (i == rulesNumber-1 && isOrdered(val)) {
+                pageNumSum+=val[Math.floor(val.length/2)];
+            }
         }
     }
 });
