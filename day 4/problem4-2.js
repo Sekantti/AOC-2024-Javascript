@@ -1,10 +1,8 @@
 import { readFileSync } from 'fs';
 
-const filePath = 'problem4.in';
-
 const searchSpace = [];
 
-readFileSync(filePath, 'utf-8').split('\n').forEach((val, i) => {
+readFileSync('problem4.in', 'utf-8').split('\n').forEach((val, i) => {
     searchSpace[i] = val.split('');
 });
 

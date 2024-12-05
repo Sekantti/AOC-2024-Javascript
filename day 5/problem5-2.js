@@ -1,10 +1,9 @@
 import { readFileSync } from 'fs';
 
-const filePathRules = 'problem5-rules.in';
-const filePathUpdates = 'problem5-updates.in'
-
-const rules = readFileSync(filePathRules, 'utf-8').split('\n').map(pages => pages.split('|').map(number => parseInt(number)));
-const updates = readFileSync(filePathUpdates, 'utf-8').split('\n').map(pages => pages.split(',').map(number => parseInt(number)));
+const rules = readFileSync('problem5-rules.in', 'utf-8').split('\n').map(
+    pages => pages.split('|').map(number => parseInt(number)));
+const updates = readFileSync('problem5-updates.in', 'utf-8').split('\n').map(
+    pages => pages.split(',').map(number => parseInt(number)));
 
 const rulesNumber = rules.length;
 const unorderedUpdates = [];

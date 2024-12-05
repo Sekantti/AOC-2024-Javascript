@@ -1,8 +1,6 @@
 import { readFileSync } from 'fs';
 
-const filePath = 'problem3.in';
-
-const multiples = readFileSync(filePath, 'utf-8').match(/mul\(\d{1,3},\d{1,3}\)/g);
+const multiples = readFileSync('problem3.in', 'utf-8').match(/mul\(\d{1,3},\d{1,3}\)/g);
 
 const regexpFactors = /\d+/g;
 let sum = 0;

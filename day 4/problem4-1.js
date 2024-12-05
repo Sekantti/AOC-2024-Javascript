@@ -1,9 +1,7 @@
 import { readFileSync } from 'fs';
 
-const filePath = 'problem4.in';
-
 const content = [];
-readFileSync(filePath, 'utf-8').split('\n').forEach((val, i) => {
+readFileSync('problem4.in', 'utf-8').split('\n').forEach((val, i) => {
     content[i] = val.split('');
 });
 
@@ -12,7 +10,7 @@ const searchSpaceVertical = content[0].map((_, colIndex) => content.map(row => r
 const searchSpaceDiagTLBR = [];
 const searchSpaceDiagBLTP = [];
 const regeXmas = /xmas/gi;
-const regexSamx = /samx/gi;
+const samXeger = /samx/gi;
 
 for (let i = 0; i < content.length; i++) {
     for (let j = 0; j < content[i].length; j++) {
@@ -43,7 +41,7 @@ function xmasSum(array) {
     array.forEach((subArray) => {
         if (subArray.length >= 4) {
             sum += length(subArray.match(regeXmas));
-            sum += length(subArray.match(regexSamx));
+            sum += length(subArray.match(samXeger));
         }
     });
     return sum;
