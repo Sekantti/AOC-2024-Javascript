@@ -6,48 +6,33 @@ const updates = readFileSync('problem5-updates.in', 'utf-8').split('\n').map(
     pages => pages.split(',').map(number => parseInt(number)));
 
 const rulesNumber = rules.length;
-const unorderedUpdates = [];
 let pageNumSum = 0;
 
 function isOrdered(arr) {
-    for (let i = 0; i < rulesNumber; i++) {
-         const firstPageIndex = arr.indexOf(rules[i][0]);
-         const secondPageIndex = arr.indexOf(rules[i][1]);
+    for (let rule of rules) {
+         const firstPageIndex = arr.indexOf(rule[0]);
+         const secondPageIndex = arr.indexOf(rule[1]);
          if (firstPageIndex != -1 && secondPageIndex != -1 && firstPageIndex > secondPageIndex) {
             return false;
          }
-         if (i == rulesNumber -1) {
-            return true;
-         }
     }
+    return true;
 }
 
-updates.forEach((val) => {
-    let i = unorderedUpdates.length
-    if (!isOrdered(val)) {
-        unorderedUpdates[i] = val;
-    }
-});
-
-function arraymove(arr, fromIndex, toIndex) {
-    let element = arr[fromIndex];
-    arr.splice(fromIndex, 1);
-    arr.splice(toIndex, 0, element);
-}
+const unorderedUpdates = updates.filter((list) => { return !isOrdered(list) });
 
 unorderedUpdates.forEach((val) => {
     while (!isOrdered(val)) {
-        for (let i = 0; i < rulesNumber; i++) {
-            const firstPageIndex = val.indexOf(rules[i][0]);
-            const secondPageIndex = val.indexOf(rules[i][1]);
+        for (let rule of rules) {
+            const firstPageIndex = val.indexOf(rule[0]);
+            const secondPageIndex = val.indexOf(rule[1]);
             if (firstPageIndex != -1 && secondPageIndex != -1 && firstPageIndex > secondPageIndex) {
-                arraymove(val, secondPageIndex, firstPageIndex);
-                //val.splice(secondPageIndex,1);
-                //val.splice(firstPageIndex,0,val[secondPageIndex])
+                let element = val.splice(secondPageIndex,1)[0];
+                val.splice(firstPageIndex,0,element);
             }
-            if (i == rulesNumber-1 && isOrdered(val)) {
-                pageNumSum+=val[Math.floor(val.length/2)];
-            }
+        }
+        if (isOrdered(val)) {
+            pageNumSum+=val[Math.floor(val.length/2)];
         }
     }
 });
