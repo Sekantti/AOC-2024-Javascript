@@ -2,8 +2,7 @@ import { readFileSync } from 'fs';
 
 const filePath = 'problem3.in';
 
-const content = readFileSync(filePath, 'utf-8') + "do()";
-const multiples = content.replace(/\n/g, ".").replace(/don't\(\)(.+?)do\(\)/g, ".").match(/mul\(\d{1,3},\d{1,3}\)/g);
+const multiples = (readFileSync(filePath, 'utf-8') + "do()").replace(/\n/g, ".").replace(/don't\(\)(.+?)do\(\)/g, ".").match(/mul\(\d{1,3},\d{1,3}\)/g);
 
 const regexpFactors = /\d+/g;
 let sum = 0;

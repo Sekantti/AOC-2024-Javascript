@@ -2,9 +2,7 @@ import { readFileSync } from 'fs';
 
 const filePath = 'problem2.in';
 
-const content = readFileSync(filePath, 'utf-8');
-
-const reports = content.split('\n').map(levels => levels.split(" ").map(num => parseInt(num)));
+const reports = readFileSync(filePath, 'utf-8').split('\n').map(levels => levels.split(" ").map(num => parseInt(num)));
 
 const reportsLength = reports.length;
 

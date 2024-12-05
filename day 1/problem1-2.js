@@ -2,10 +2,8 @@ import { readFileSync } from 'fs';
 
 const filePath = 'problem1.in';
 
-const content = readFileSync(filePath, 'utf-8');
-
 const lists = [[], []];
-content.split('\n').map(pair => pair.split("   ").map(num => parseInt(num))).forEach((pair,i) => {
+readFileSync(filePath, 'utf-8').split('\n').map(pair => pair.split("   ").map(num => parseInt(num))).forEach((pair,i) => {
     pair.forEach((num, j) => {
         lists[j][i] = num;
     });
