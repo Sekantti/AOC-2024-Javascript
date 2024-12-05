@@ -23,18 +23,18 @@ function isOrdered(arr) {
     }
 }
 
-function arraymove(arr, fromIndex, toIndex) {
-    var element = arr[fromIndex];
-    arr.splice(fromIndex, 1);
-    arr.splice(toIndex, 0, element);
-}
-
 updates.forEach((val) => {
     let i = unorderedUpdates.length
     if (!isOrdered(val)) {
         unorderedUpdates[i] = val;
     }
 });
+
+function arraymove(arr, fromIndex, toIndex) {
+    var element = arr[fromIndex];
+    arr.splice(fromIndex, 1);
+    arr.splice(toIndex, 0, element);
+}
 
 unorderedUpdates.forEach((val) => {
     while (!isOrdered(val)) {
