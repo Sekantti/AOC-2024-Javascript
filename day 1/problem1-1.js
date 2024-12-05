@@ -18,7 +18,7 @@ lists[1].sort(function(a, b) {
     return a - b;
 });
 
-var distance = 0;
+let distance = 0;
 
 lists[0].forEach((value, i) => {
     distance += Math.abs(value - lists[1][i]);

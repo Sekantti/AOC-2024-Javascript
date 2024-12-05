@@ -10,10 +10,10 @@ readFileSync(filePath, 'utf-8').split('\n').forEach((val, i) => {
 
 const columns = content.length;
 const rows = content[0].length;
-var sum = 0;
+let sum = 0;
 
-for (var i = 1; i < columns - 1; i++) {
-    for (var j = 1; j < rows - 1; j++) {
+for (let i = 1; i < columns - 1; i++) {
+    for (let j = 1; j < rows - 1; j++) {
         if (
             content[i][j] == "A" && (
                 (

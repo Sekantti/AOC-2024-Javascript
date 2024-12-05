@@ -11,10 +11,10 @@ content.split('\n').map(pair => pair.split("   ").map(num => parseInt(num))).for
     });
 });
 
-var similarity = 0;
+let similarity = 0;
 
 lists[0].forEach(value => {
-    var multiplier = 0;
+    let multiplier = 0;
     lists[1].forEach(otherValue => {
         if (value == otherValue) {
             multiplier++;

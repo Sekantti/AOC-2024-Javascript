@@ -14,21 +14,21 @@ const searchSpaceDiagBLTP = [];
 const regeXmas = /xmas/gi;
 const regexSamx = /samx/gi;
 
-for (var i = 0; i < content.length; i++) {
-    for (var j = 0; j < content[i].length; j++) {
+for (let i = 0; i < content.length; i++) {
+    for (let j = 0; j < content[i].length; j++) {
         const diagIndex = i + j;
         searchSpaceDiagBLTP[diagIndex] = (searchSpaceDiagBLTP[diagIndex] || '') + content[i][j];
     }
 }
 
-for (var i = 0; i < content.length; i++) {
-    for (var j = 0; j < content[i].length; j++) {
+for (let i = 0; i < content.length; i++) {
+    for (let j = 0; j < content[i].length; j++) {
         const diagIndex = content[i].length - 1 - j + i;
         searchSpaceDiagTLBR[diagIndex] = (searchSpaceDiagTLBR[diagIndex] || '') + content[i][j];
     }
 }
 
-var sum = 0;
+let sum = 0;
 
 function length(array) {
     if (Array.isArray(array)) {
@@ -39,7 +39,7 @@ function length(array) {
 }
 
 function xmasSum(array) {
-    var sum = 0;
+    let sum = 0;
     array.forEach((subArray) => {
         if (subArray.length >= 4) {
             sum += length(subArray.match(regeXmas));
