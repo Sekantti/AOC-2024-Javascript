@@ -5,7 +5,6 @@ const rules = readFileSync('problem5-rules.in', 'utf-8').split('\n').map(
 const updates = readFileSync('problem5-updates.in', 'utf-8').split('\n').map(
     pages => pages.split(',').map(number => parseInt(number)));
 
-const rulesNumber = rules.length;
 let pageNumSum = 0;
 
 function isOrdered(arr) {

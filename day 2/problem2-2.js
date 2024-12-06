@@ -7,15 +7,14 @@ const reportsLength = reports.length;
 
 let safe = reportsLength;
 
-for (let i = 0; i < reportsLength; i++) {
-    const levelsAmount = reports[i].length;
-    let successes = levelsAmount;
-    for (let j = 0; j < levelsAmount; j++) {
-        let variant = [...reports[i]];
-        variant.splice(j, 1);
-        let increasing = variant[0]-variant[1] < 0;
-        for (let k = 0; k < levelsAmount - 2; k++) {
-            let diff = variant[k]-variant[k+1];
+reports.forEach((val) => {
+    let successes = val.length;
+    for (let i = 0; i < val.length; i++) {
+        let variant = [...val];
+        variant.splice(i, 1);
+        let increasing = variant[0] - variant[1] < 0;
+        for (let j = 0; j < val.length - 2; j++) {
+            let diff = variant[j] - variant[j + 1];
             if (diff == 0 || Math.abs(diff) > 3 || increasing != (diff < 0)) {
                 successes--;
                 break;
@@ -26,6 +25,6 @@ for (let i = 0; i < reportsLength; i++) {
             break;
         }
     }
-}
+});
 
 console.log(safe);

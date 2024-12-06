@@ -1,8 +1,8 @@
 import { readFileSync } from 'fs';
 
-const rules = readFileSync('problem5-rules.in', 'utf-8').split('\n').map(
+const rules = readFileSync('problem5-example-rules.in', 'utf-8').split('\n').map(
     pages => pages.split('|').map(number => parseInt(number)));
-const updates = readFileSync('problem5-updates.in', 'utf-8').split('\n').map(
+const updates = readFileSync('problem5-example-updates.in', 'utf-8').split('\n').map(
     pages => pages.split(',').map(number => parseInt(number)));
 
 let pageNumSum = 0;

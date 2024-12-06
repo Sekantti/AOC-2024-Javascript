@@ -7,16 +7,15 @@ const reportsLength = reports.length;
 
 let safe = reportsLength;
 
-for (let i = 0; i < reportsLength; i++) {
-    let increasing = reports[i][0] - reports[i][1] < 0;
-    let levelsAmount = reports[i].length;
-    for (let j = 0; j < levelsAmount-1; j++) {
-        let diff = reports[i][j] - reports[i][j+1];
+reports.forEach((val) => {
+    let increasing = val[0] - val[1] < 0;
+    for (let i = 0; i < val.length-1; i++) {
+        let diff = val[i] - val[i+1];
         if (diff == 0 || Math.abs(diff) > 3 || increasing != (diff < 0)) {
             safe--;
-            break;
+            return;
         }
     }
-}
+})
 
 console.log(safe);
