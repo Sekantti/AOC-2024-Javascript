@@ -1,55 +1,48 @@
 import { readFileSync } from 'fs';
 
-const searchSpace = [];
+const file = Bun.file("output.txt");
+const writer = file.writer()
+
+const searchSpaceGlobal = [];
 
 readFileSync('problem6.in', 'utf-8').split('\n').forEach((val, i) => {
-    searchSpace[i] = val.split('');
+    searchSpaceGlobal[i] = val.split('');
 });
 
 const orientations = ['^', '>', 'v', '<'];
 
-let possiblePositions = 0;
-let position = [];
-let orientation;
-searchSpace.forEach((val) => {
+const guardPositionInitial = [];
+searchSpaceGlobal.forEach((val) => {
     val.find((direction) => {
         if (orientations.indexOf(direction) != -1) {
-            position = [searchSpace.indexOf(val), val.indexOf(direction)];
-            orientation = orientations[orientations.indexOf(direction)];
+            guardPositionInitial[0] = searchSpaceGlobal.indexOf(val)
+            guardPositionInitial[1] = val.indexOf(direction);
         }
     })
 });
+const guardOrientationInitial = searchSpaceGlobal[guardPositionInitial[0]][guardPositionInitial[1]];
 
-const guardPositionInitial = position;
-const guardOrientationInitial = orientation;
-let locations = {};
-
-// Helper to create a unique key
 function createKey(position, direction) {
     return `${position[0]},${position[1]}:${direction}`;
 }
 
 // Function to add an entry
-function addEntry(position, direction) {
+function addEntry(locations, position, direction) {
     const key = createKey(position, direction);
-    locations[key] = { position, direction }; // Store the entry
+    locations[key] = true; // Store the entry
 }
 
 // Function to check if an entry exists
-function hasEntry(position, direction) {
+function hasEntry(locations, position, direction) {
     const key = createKey(position, direction);
-    return locations.hasOwnProperty(key);
+    return key in locations;
 }
 
-function obstaclePresence(i, j, direction) { //this function works as expected
-    if ((direction == '^' && searchSpace[i - 1][j] == '#') ||
+function obstaclePresence(i, j, direction, searchSpace) { //this function works as expected
+    return ((direction == '^' && searchSpace[i - 1][j] == '#') ||
         (direction == '>' && searchSpace[i][j + 1] == '#') ||
         (direction == 'v' && searchSpace[i + 1][j] == '#') ||
-        (direction == '<' && searchSpace[i][j - 1] == '#')) {
-        return true;
-    } else {
-        return false;
-    }
+        (direction == '<' && searchSpace[i][j - 1] == '#'))
 }
 
 function changeDirection(direction) { //this function works as expected
@@ -65,6 +58,7 @@ function changeDirection(direction) { //this function works as expected
     if (direction == '<') {
         return '^'
     }
+    console.log("oh no wat");
 }
 
 function move(i, j, direction) { //this function works as expected
@@ -84,43 +78,50 @@ function move(i, j, direction) { //this function works as expected
 
 function guardExitingMap(i, j, orientation) { //this function works as expected
     return ((orientation == '^' && i == 0) ||
-        (orientation == '>' && j == searchSpace[0].length - 1) ||
-        (orientation == 'v' && i == searchSpace.length - 1) ||
+        (orientation == '>' && j == searchSpaceGlobal[0].length - 1) ||
+        (orientation == 'v' && i == searchSpaceGlobal.length - 1) ||
         (orientation == '<' && j == 0)
-    )
+    );
 }
 
-console.log(guardPositionInitial + guardOrientationInitial);
-
-for (let i = 0; i < 20; i++) {
-    for (let j = 0; j < 20; j++) {
-        let guardPosition = guardPositionInitial;
-        let guardOrientation = guardOrientationInitial;
-        if (searchSpace[i][j] != '#') {
-            searchSpace[i][j] = '#';
-            while (true) {
-                if (guardExitingMap(guardPosition[0], guardPosition[1], guardOrientation)) {
-                    locations = {};
-                    searchSpace[i][j] = '.'
-                    break;
-                }
-                if (obstaclePresence(guardPosition[0], guardPosition[1], guardOrientation)) {
-                    guardOrientation = changeDirection(guardOrientation);
-                    guardPosition = move(guardPosition[0], guardPosition[1], guardOrientation);
-                } else {
-                    guardPosition = move(guardPosition[0], guardPosition[1], guardOrientation);
-                }
-                if (hasEntry(guardPosition, guardOrientation)) {
-                    locations = {};
-                    searchSpace[i][j] = '.'
-                    possiblePositions++;
-                    console.log([i, j])
-                    break;
-                }
-                addEntry(guardPosition, guardOrientation);
-            }
+function canFinish(searchSpace, guardPosition, guardOrientation) {
+    const locations = {};
+    while (true) {
+        if (guardExitingMap(guardPosition[0], guardPosition[1], guardOrientation)) {
+            return true;
         }
+        if (obstaclePresence(guardPosition[0], guardPosition[1], guardOrientation, searchSpace)) {
+            guardOrientation = changeDirection(guardOrientation);
+        }
+        guardPosition = move(guardPosition[0], guardPosition[1], guardOrientation);
+        if (hasEntry(locations, guardPosition, guardOrientation)) {
+            return false;
+        }
+        addEntry(locations, guardPosition, guardOrientation);
     }
 }
 
-console.log(possiblePositions);
+function guardRoute() {
+    let possiblePositions = 0;
+    for (let i = 0; i < searchSpaceGlobal.length; i++) {
+        for (let j = 0; j < searchSpaceGlobal[0].length; j++) {
+            let searchSpace = structuredClone(searchSpaceGlobal);
+            let guardPosition = structuredClone(guardPositionInitial);
+            let guardOrientation = guardOrientationInitial;
+            //console.log(locations);
+            if (searchSpace[i][j] == '.') {
+                searchSpace[i][j] = '#';
+                if (!canFinish(searchSpace, guardPosition, guardOrientation)) {
+                    possiblePositions++;
+                    writer.write([i,j] + "\n");
+                }
+            }
+        }
+    }
+    return possiblePositions;
+}
+
+writer.flush()
+guardRoute();
+// console.log(guardRoute());
+// console.log(canFinish(searchSpaceGlobal, guardPositionInitial, guardOrientationInitial));
