@@ -1,8 +1,5 @@
 import { readFileSync } from 'fs';
 
-const file = Bun.file("output.txt");
-const writer = file.writer()
-
 const searchSpaceGlobal = [];
 
 readFileSync('problem6.in', 'utf-8').split('\n').forEach((val, i) => {
@@ -86,6 +83,7 @@ function guardExitingMap(i, j, orientation) { //this function works as expected
 
 function canFinish(searchSpace, guardPosition, guardOrientation) {
     const locations = {};
+    // console.log(searchSpace);
     while (true) {
         if (guardExitingMap(guardPosition[0], guardPosition[1], guardOrientation)) {
             return true;
@@ -105,15 +103,13 @@ function guardRoute() {
     let possiblePositions = 0;
     for (let i = 0; i < searchSpaceGlobal.length; i++) {
         for (let j = 0; j < searchSpaceGlobal[0].length; j++) {
-            let searchSpace = structuredClone(searchSpaceGlobal);
-            let guardPosition = structuredClone(guardPositionInitial);
-            let guardOrientation = guardOrientationInitial;
-            //console.log(locations);
-            if (searchSpace[i][j] == '.') {
+            if (searchSpaceGlobal[i][j] == '.') {
+                let searchSpace = structuredClone(searchSpaceGlobal);
+                let guardPosition = structuredClone(guardPositionInitial);
+                let guardOrientation = guardOrientationInitial;
                 searchSpace[i][j] = '#';
                 if (!canFinish(searchSpace, guardPosition, guardOrientation)) {
                     possiblePositions++;
-                    writer.write([i,j] + "\n");
                 }
             }
         }
@@ -121,7 +117,5 @@ function guardRoute() {
     return possiblePositions;
 }
 
-writer.flush()
-guardRoute();
-// console.log(guardRoute());
+console.log(guardRoute());
 // console.log(canFinish(searchSpaceGlobal, guardPositionInitial, guardOrientationInitial));
