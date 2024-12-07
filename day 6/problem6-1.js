@@ -1,118 +1,87 @@
 import { readFileSync } from 'fs';
 
-const searchSpace = [];
+const searchSpaceGlobal = [];
 
-readFileSync('problem6-example.in', 'utf-8').split('\n').forEach((val, i) => {
-    searchSpace[i] = val.split('');
+readFileSync('problem6.in', 'utf-8').split('\n').forEach((val, i) => {
+    searchSpaceGlobal[i] = val.split('');
 });
 
 const orientations = ['^', '>', 'v', '<'];
 
-function changeDirection(char) {
-    if (char == '^') {
+const guardPositionInitial = [];
+searchSpaceGlobal.forEach((val) => {
+    val.find((direction) => {
+        if (orientations.indexOf(direction) != -1) {
+            guardPositionInitial[0] = searchSpaceGlobal.indexOf(val)
+            guardPositionInitial[1] = val.indexOf(direction);
+        }
+    })
+});
+const guardOrientationInitial = searchSpaceGlobal[guardPositionInitial[0]][guardPositionInitial[1]];
+
+function obstaclePresence(i, j, direction) { //this function works as expected
+    return ((direction == '^' && searchSpaceGlobal[i - 1][j] == '#') ||
+        (direction == '>' && searchSpaceGlobal[i][j + 1] == '#') ||
+        (direction == 'v' && searchSpaceGlobal[i + 1][j] == '#') ||
+        (direction == '<' && searchSpaceGlobal[i][j - 1] == '#'))
+}
+
+function changeDirection(direction) { //this function works as expected
+    if (direction == '^') {
         return '>';
     }
-    if (char == '>') {
+    if (direction == '>') {
         return 'v';
     }
-    if (char == 'v') {
+    if (direction == 'v') {
         return '<'
     }
-    if (char == '<') {
+    if (direction == '<') {
         return '^'
     }
 }
 
-function move(arr, i, j, direction) {
+function move(i, j, direction) { //this function works as expected
     if (direction == '^') {
-        arr[i][j] = 'X';
-        arr[i-1][j] = '^'
+        return [i - 1, j];
+    }
+    if (direction == '>') {
+        return [i, j + 1];
+    }
+    if (direction == 'v') {
+        return [i + 1, j];
+    }
+    if (direction == '<') {
+        return [i, j - 1];
     }
 }
 
-function guardInMap() {
-    let guardInMap = false
-    searchSpace.forEach((val) => {
-        val.find((direction) => {
-            if (orientations.indexOf(direction) != -1) {
-                guardInMap = true
-            }
-        })
-    })
-    return guardInMap;
+function guardExitingMap(i, j, orientation) { //this function works as expected
+    return ((orientation == '^' && i == 0) ||
+        (orientation == '>' && j == searchSpaceGlobal[0].length - 1) ||
+        (orientation == 'v' && i == searchSpaceGlobal.length - 1) ||
+        (orientation == '<' && j == 0)
+    );
 }
 
-while (guardInMap()) {
-    let guardPosition = [];
-    let guardOrientation;
-    searchSpace.forEach((val) => {
-        val.find((direction) => {
-            if (orientations.indexOf(direction) != -1) {
-                guardPosition = [searchSpace.indexOf(val), val.indexOf(direction)];
-                guardOrientation = orientations[orientations.indexOf(direction)];
-            }
-        })
-    })
-    
-    /*for (let i = 0; i < searchSpace.length; i++) {
-        for (let j = 0; j < searchSpace[0].length; j++) {
-            if (orientations.indexOf(searchSpace[i][j]) != -1) {
-                if (searchSpace[i][j] == '^') {
-                    if (i - 1 >= 0) {
-                        if (searchSpace[i - 1][j] == '#') {
-                            searchSpace[i][j] == '>';
-                        }
-                        else {
-                            searchSpace[i][j] == 'X';
-                            searchSpace[i - 1][j] == '^';
-                        }
-                    } else {
-                        searchSpace[i][j] == 'X';
-                    }
-                }
-                if (searchSpace[i][j] == '>') {
-                    if (j + 1 < searchSpace[0].length) {
-                        if (searchSpace[i][j + 1] == '#') {
-                            searchSpace[i][j] == 'v';
-                        }
-                        else {
-                            searchSpace[i][j] == 'X';
-                            searchSpace[i][j + 1] == '>';
-                        }
-                    } else {
-                        searchSpace[i][j] == 'X';
-                    }
-                }
-                if (searchSpace[i][j] == 'v') {
-                    if (i + 1 < searchSpace.length) {
-                        if (searchSpace[i + 1][j] == '#') {
-                            searchSpace[i][j] == '<';
-                        }
-                        else {
-                            searchSpace[i][j] == 'X';
-                            searchSpace[i + 1][j] == 'v';
-                        }
-                    } else {
-                        searchSpace[i][j] == 'X';
-                    }
-                }
-                if (searchSpace[i][j] == '<') {
-                    if (j - 1 >= 0) {
-                        if (searchSpace[i][j - 1] == '#') {
-                            searchSpace[i][j] == '^';
-                        }
-                        else {
-                            searchSpace[i][j] == 'X';
-                            searchSpace[i][j - 1] == '<';
-                        }
-                    } else {
-                        searchSpace[i][j] == 'X';
-                    }
-                }
+function guardRoute() {
+    let searchSpace = searchSpaceGlobal;
+    let guardPosition = guardPositionInitial;
+    let guardOrientation = guardOrientationInitial;
+    while (true) {
+        searchSpace[guardPosition[0]][guardPosition[1]] = 'X';
+        if (guardExitingMap(guardPosition[0], guardPosition[1], guardOrientation)) {
+            break;
+        } else {
+            if (obstaclePresence(guardPosition[0], guardPosition[1], guardOrientation)) {
+                guardOrientation = changeDirection(guardOrientation);
+                guardPosition = move(guardPosition[0], guardPosition[1], guardOrientation);
+            } else {
+                guardPosition = move(guardPosition[0], guardPosition[1], guardOrientation);
             }
         }
-    }*/
+    }
+    console.log(searchSpace.flat().filter((char) => char == 'X').length);
 }
 
-
-console.log(searchSpace);
+guardRoute();
