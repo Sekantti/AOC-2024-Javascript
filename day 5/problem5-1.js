@@ -1,21 +1,22 @@
 import { readFileSync } from 'fs';
 
-const rules = readFileSync('problem5-example-rules.in', 'utf-8').split('\n').map(
+const rules = readFileSync('problem5-rules.in', 'utf-8').split('\n').map(
     pages => pages.split('|').map(number => parseInt(number)));
-const updates = readFileSync('problem5-example-updates.in', 'utf-8').split('\n').map(
+const updates = readFileSync('problem5-updates.in', 'utf-8').split('\n').map(
     pages => pages.split(',').map(number => parseInt(number)));
 
-let pageNumSum = 0;
+function isOrdered(update) {
+    return !rules.some((rule) => {
+        const firstPageIndex = update.indexOf(rule[0]);
+        const secondPageIndex = update.indexOf(rule[1]);
+        return firstPageIndex != -1 && secondPageIndex != -1 && firstPageIndex > secondPageIndex;
+    })
+}
 
-updates.forEach((val) => {
-    for (let rule of rules) {
-        const firstPageIndex = val.indexOf(rule[0]);
-        const secondPageIndex = val.indexOf(rule[1]);
-        if (firstPageIndex != -1 && secondPageIndex != -1 && firstPageIndex > secondPageIndex) {
-            return;
-        }
-    }
-    pageNumSum+=val[Math.floor(val.length/2)];
-});
+const sum = updates.filter((update) => {
+    return isOrdered(update)
+}).map((update) => {
+    return update[Math.floor(update.length/2)];
+}).reduce((l, r) => {return l + r});
 
-console.log(pageNumSum);
+console.log(sum);

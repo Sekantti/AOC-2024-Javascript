@@ -3,9 +3,7 @@ import { readFileSync } from 'fs';
 const reports = readFileSync('problem2.in', 'utf-8').split('\n').map(
     levels => levels.split(" ").map(num => parseInt(num)));
 
-const reportsLength = reports.length;
-
-let safe = reportsLength;
+let safe = reports.length;
 
 reports.forEach((val) => {
     let increasing = val[0] - val[1] < 0;

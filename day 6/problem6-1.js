@@ -6,12 +6,10 @@ readFileSync('problem6.in', 'utf-8').split('\n').forEach((val, i) => {
     searchSpaceGlobal[i] = val.split('');
 });
 
-const orientations = ['^', '>', 'v', '<'];
-
 const guardPositionInitial = [];
 searchSpaceGlobal.forEach((val) => {
     val.find((direction) => {
-        if (orientations.indexOf(direction) != -1) {
+        if (['^', '>', 'v', '<'].includes(direction)) {
             guardPositionInitial[0] = searchSpaceGlobal.indexOf(val)
             guardPositionInitial[1] = val.indexOf(direction);
         }

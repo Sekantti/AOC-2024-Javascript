@@ -26,8 +26,6 @@ for (let i = 0; i < content.length; i++) {
     }
 }
 
-let sum = 0;
-
 function length(array) {
     if (Array.isArray(array)) {
         return array.length;
@@ -39,13 +37,13 @@ function length(array) {
 function xmasSum(array) {
     let sum = 0;
     array.forEach((subArray) => {
-        if (subArray.length >= 4) {
             sum += length(subArray.match(regeXmas));
             sum += length(subArray.match(samXeger));
-        }
     });
     return sum;
 }
+
+let sum = 0;
 
 sum += xmasSum(searchSpaceHorizontal);
 sum += xmasSum(searchSpaceVertical);

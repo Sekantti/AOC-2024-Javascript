@@ -15,10 +15,8 @@ lists[1].sort(function(a, b) {
     return a - b;
 });
 
-let distance = 0;
+const sum = lists[0].map((value, index) => [value, lists[1][index]]).map((pair) => {
+    return Math.abs(pair[0]-pair[1]);
+}).reduce((l, r) => {return l + r});
 
-lists[0].forEach((value, i) => {
-    distance += Math.abs(value - lists[1][i]);
-});
-
-console.log(distance);
+console.log(sum)
