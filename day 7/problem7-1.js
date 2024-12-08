@@ -22,4 +22,5 @@ const tolerance = results.filter((result, i) => {
     const next = remainingCopy.shift();
     return solve(result, next, remainingCopy)
 }).reduce((l, r) => {return l + r})
+
 console.log(tolerance)
