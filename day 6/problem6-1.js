@@ -2,7 +2,7 @@ import { readFileSync } from 'fs';
 
 const searchSpaceGlobal = [];
 
-readFileSync('problem6.in', 'utf-8').split('\n').forEach((val, i) => {
+readFileSync('problem6-example.in', 'utf-8').split('\n').forEach((val, i) => {
     searchSpaceGlobal[i] = val.split('');
 });
 
@@ -17,11 +17,15 @@ searchSpaceGlobal.forEach((val) => {
 });
 const guardOrientationInitial = searchSpaceGlobal[guardPositionInitial[0]][guardPositionInitial[1]];
 
-function obstaclePresence(i, j, direction) { //this function works as expected
-    return ((direction === '^' && searchSpaceGlobal[i - 1][j] === '#') ||
-        (direction === '>' && searchSpaceGlobal[i][j + 1] === '#') ||
-        (direction === 'v' && searchSpaceGlobal[i + 1][j] === '#') ||
-        (direction === '<' && searchSpaceGlobal[i][j - 1] === '#'))
+function obstaclePresence(position, direction, searchSpace) { //this function works as expected
+    const obstacleUp = searchSpace[position[0] - 1][position[1]] === '#'
+    const obstacleLeft = searchSpace[position[0]][position[1] - 1] === '#';
+    const obstacleDown = searchSpace[position[0] + 1][position[1]] === '#';
+    const obstacleRight = searchSpace[position[0]][position[1] + 1] === '#'
+    if (obstacleDown && obstacleLeft && obstacleRight && obstacleUp) {
+        return "surrounded";
+    }
+    return (direction === '^' && obstacleUp) || (direction === '>' && obstacleRight) || (direction === 'v' && obstacleDown) || (direction === '<' && obstacleLeft);
 }
 
 function changeDirection(direction) { //this function works as expected
@@ -39,27 +43,34 @@ function changeDirection(direction) { //this function works as expected
     }
 }
 
-function move(i, j, direction) { //this function works as expected
+function move(position, direction) { //this function works as expected
     if (direction === '^') {
-        return [i - 1, j];
+        return [position[0] - 1, position[1]];
     }
     if (direction === '>') {
-        return [i, j + 1];
+        return [position[0], position[1] + 1];
     }
     if (direction === 'v') {
-        return [i + 1, j];
+        return [position[0] + 1, position[1]];
     }
     if (direction === '<') {
-        return [i, j - 1];
+        return [position[0], position[1] - 1];
     }
 }
 
-function guardExitingMap(i, j, orientation) { //this function works as expected
-    return ((orientation === '^' && i === 0) ||
-        (orientation === '>' && j === searchSpaceGlobal[0].length - 1) ||
-        (orientation === 'v' && i === searchSpaceGlobal.length - 1) ||
-        (orientation === '<' && j === 0)
+function guardExitingMap(position, orientation, searchSpace) { //this function works as expected
+    return ((orientation === '^' && position[0] === 0) ||
+        (orientation === '>' && position[1] === searchSpace[0].length - 1) ||
+        (orientation === 'v' && position[0] === searchSpace.length - 1) ||
+        (orientation === '<' && position[1] === 0)
     );
+}
+
+function recursiveMove(position, direction, searchSpace) {
+    if (!obstaclePresence(position, direction, searchSpace)) {
+        return [move(position, direction), direction];
+    }
+    return recursiveMove(position, changeDirection(direction), searchSpace);
 }
 
 function guardRoute() {
@@ -68,15 +79,15 @@ function guardRoute() {
     let guardOrientation = guardOrientationInitial;
     while (true) {
         searchSpace[guardPosition[0]][guardPosition[1]] = 'X';
-        if (guardExitingMap(guardPosition[0], guardPosition[1], guardOrientation)) {
+        if (guardExitingMap(guardPosition, guardOrientation, searchSpace)) {
             break;
-        } else {
-            if (obstaclePresence(guardPosition[0], guardPosition[1], guardOrientation)) {
-                guardOrientation = changeDirection(guardOrientation);
-            } else {
-                guardPosition = move(guardPosition[0], guardPosition[1], guardOrientation);
-            }
         }
+        if (obstaclePresence(guardPosition, guardOrientation, searchSpace) === 'surrounded') {
+            break;
+        }
+        const newPosition = recursiveMove(guardPosition, guardOrientation, searchSpace);
+        guardPosition = newPosition[0];
+        guardOrientation = newPosition[1];
     }
     return searchSpace.flat().filter((char) => char === 'X').length;
 }

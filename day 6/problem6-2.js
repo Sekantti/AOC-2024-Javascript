@@ -31,11 +31,15 @@ function hasEntry(locations, position, direction) {
     return key in locations;
 }
 
-function obstaclePresence(i, j, direction, searchSpace) { //this function works as expected
-    return ((direction === '^' && searchSpace[i - 1][j] === '#') ||
-        (direction === '>' && searchSpace[i][j + 1] === '#') ||
-        (direction === 'v' && searchSpace[i + 1][j] === '#') ||
-        (direction === '<' && searchSpace[i][j - 1] === '#'))
+function obstaclePresence(position, direction, searchSpace) { //this function works as expected
+    const obstacleUp = searchSpace[position[0] - 1][position[1]] === '#'
+    const obstacleLeft = searchSpace[position[0]][position[1] - 1] === '#';
+    const obstacleDown = searchSpace[position[0] + 1][position[1]] === '#';
+    const obstacleRight = searchSpace[position[0]][position[1] + 1] === '#'
+    if (obstacleDown && obstacleLeft && obstacleRight && obstacleUp) {
+        return "surrounded";
+    }
+    return (direction === '^' && obstacleUp) || (direction === '>' && obstacleRight) || (direction === 'v' && obstacleDown) || (direction === '<' && obstacleLeft);
 }
 
 function changeDirection(direction) { //this function works as expected
@@ -51,43 +55,50 @@ function changeDirection(direction) { //this function works as expected
     if (direction === '<') {
         return '^'
     }
-    console.log("oh no wat");
 }
 
-function move(i, j, direction) { //this function works as expected
+function move(position, direction) { //this function works as expected
     if (direction === '^') {
-        return [i - 1, j];
+        return [position[0] - 1, position[1]];
     }
     if (direction === '>') {
-        return [i, j + 1];
+        return [position[0], position[1] + 1];
     }
     if (direction === 'v') {
-        return [i + 1, j];
+        return [position[0] + 1, position[1]];
     }
     if (direction === '<') {
-        return [i, j - 1];
+        return [position[0], position[1] - 1];
     }
 }
 
-function guardExitingMap(i, j, orientation) { //this function works as expected
-    return ((orientation === '^' && i === 0) ||
-        (orientation === '>' && j === searchSpaceGlobal[0].length - 1) ||
-        (orientation === 'v' && i === searchSpaceGlobal.length - 1) ||
-        (orientation === '<' && j === 0)
+function guardExitingMap(position, orientation, searchSpace) { //this function works as expected
+    return ((orientation === '^' && position[0] === 0) ||
+        (orientation === '>' && position[1] === searchSpace[0].length - 1) ||
+        (orientation === 'v' && position[0] === searchSpace.length - 1) ||
+        (orientation === '<' && position[1] === 0)
     );
+}
+
+function recursiveMove(position, direction, searchSpace) {
+    if (!obstaclePresence(position, direction, searchSpace)) {
+        return [move(position, direction), direction];
+    }
+    return recursiveMove(position, changeDirection(direction), searchSpace);
 }
 
 function canFinish(searchSpace, guardPosition, guardOrientation) {
     const locations = {};
     while (true) {
-        if (guardExitingMap(guardPosition[0], guardPosition[1], guardOrientation)) {
+        if (guardExitingMap(guardPosition, guardOrientation, searchSpace)) {
             return true;
         }
-        if (obstaclePresence(guardPosition[0], guardPosition[1], guardOrientation, searchSpace)) {
-            guardOrientation = changeDirection(guardOrientation);
-        } else {
-            guardPosition = move(guardPosition[0], guardPosition[1], guardOrientation);
+        if (obstaclePresence(guardPosition, guardOrientation, searchSpace) === 'surrounded') {
+            return false;
         }
+        const newPosition = recursiveMove(guardPosition, guardOrientation, searchSpace);
+        guardPosition = newPosition[0];
+        guardOrientation = newPosition[1];
         if (hasEntry(locations, guardPosition, guardOrientation)) {
             return false;
         }
