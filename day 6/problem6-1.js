@@ -18,47 +18,47 @@ searchSpaceGlobal.forEach((val) => {
 const guardOrientationInitial = searchSpaceGlobal[guardPositionInitial[0]][guardPositionInitial[1]];
 
 function obstaclePresence(i, j, direction) { //this function works as expected
-    return ((direction == '^' && searchSpaceGlobal[i - 1][j] == '#') ||
-        (direction == '>' && searchSpaceGlobal[i][j + 1] == '#') ||
-        (direction == 'v' && searchSpaceGlobal[i + 1][j] == '#') ||
-        (direction == '<' && searchSpaceGlobal[i][j - 1] == '#'))
+    return ((direction === '^' && searchSpaceGlobal[i - 1][j] === '#') ||
+        (direction === '>' && searchSpaceGlobal[i][j + 1] === '#') ||
+        (direction === 'v' && searchSpaceGlobal[i + 1][j] === '#') ||
+        (direction === '<' && searchSpaceGlobal[i][j - 1] === '#'))
 }
 
 function changeDirection(direction) { //this function works as expected
-    if (direction == '^') {
+    if (direction === '^') {
         return '>';
     }
-    if (direction == '>') {
+    if (direction === '>') {
         return 'v';
     }
-    if (direction == 'v') {
+    if (direction === 'v') {
         return '<'
     }
-    if (direction == '<') {
+    if (direction === '<') {
         return '^'
     }
 }
 
 function move(i, j, direction) { //this function works as expected
-    if (direction == '^') {
+    if (direction === '^') {
         return [i - 1, j];
     }
-    if (direction == '>') {
+    if (direction === '>') {
         return [i, j + 1];
     }
-    if (direction == 'v') {
+    if (direction === 'v') {
         return [i + 1, j];
     }
-    if (direction == '<') {
+    if (direction === '<') {
         return [i, j - 1];
     }
 }
 
 function guardExitingMap(i, j, orientation) { //this function works as expected
-    return ((orientation == '^' && i == 0) ||
-        (orientation == '>' && j == searchSpaceGlobal[0].length - 1) ||
-        (orientation == 'v' && i == searchSpaceGlobal.length - 1) ||
-        (orientation == '<' && j == 0)
+    return ((orientation === '^' && i === 0) ||
+        (orientation === '>' && j === searchSpaceGlobal[0].length - 1) ||
+        (orientation === 'v' && i === searchSpaceGlobal.length - 1) ||
+        (orientation === '<' && j === 0)
     );
 }
 
@@ -73,13 +73,12 @@ function guardRoute() {
         } else {
             if (obstaclePresence(guardPosition[0], guardPosition[1], guardOrientation)) {
                 guardOrientation = changeDirection(guardOrientation);
-                guardPosition = move(guardPosition[0], guardPosition[1], guardOrientation);
             } else {
                 guardPosition = move(guardPosition[0], guardPosition[1], guardOrientation);
             }
         }
     }
-    console.log(searchSpace.flat().filter((char) => char == 'X').length);
+    return searchSpace.flat().filter((char) => char === 'X').length;
 }
 
-guardRoute();
+console.log(guardRoute());

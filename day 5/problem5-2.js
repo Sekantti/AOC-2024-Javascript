@@ -9,7 +9,7 @@ function isOrdered(update) {
     return !rules.some((rule) => {
         const firstPageIndex = update.indexOf(rule[0]);
         const secondPageIndex = update.indexOf(rule[1]);
-        return firstPageIndex != -1 && secondPageIndex != -1 && firstPageIndex > secondPageIndex;
+        return firstPageIndex !== -1 && secondPageIndex !== -1 && firstPageIndex > secondPageIndex;
     })
 }
 
@@ -20,7 +20,7 @@ unorderedUpdates.filter((list) => { return !isOrdered(list) }).forEach((val) => 
         for (let rule of rules) {
             const firstPageIndex = val.indexOf(rule[0]);
             const secondPageIndex = val.indexOf(rule[1]);
-            if (firstPageIndex != -1 && secondPageIndex != -1 && firstPageIndex > secondPageIndex) {
+            if (firstPageIndex !== -1 && secondPageIndex !== -1 && firstPageIndex > secondPageIndex) {
                 let element = val.splice(secondPageIndex, 1)[0];
                 val.splice(firstPageIndex, 0, element);
             }

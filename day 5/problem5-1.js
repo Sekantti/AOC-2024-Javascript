@@ -9,7 +9,7 @@ function isOrdered(update) {
     return !rules.some((rule) => {
         const firstPageIndex = update.indexOf(rule[0]);
         const secondPageIndex = update.indexOf(rule[1]);
-        return firstPageIndex != -1 && secondPageIndex != -1 && firstPageIndex > secondPageIndex;
+        return firstPageIndex !== -1 && secondPageIndex !== -1 && firstPageIndex > secondPageIndex;
     })
 }
 

@@ -9,8 +9,8 @@ const results = input.map(line => line[0]).map(number => parseInt(number));
 const equations = input.map(line => line[1].trim().split(' ').map(number => parseInt(number)));
 
 function solve(goal, result, remaining) {
-    if (remaining.length == 0) {
-        return goal == result;
+    if (remaining.length === 0) {
+        return goal === result;
     }
     const remainingCopy = structuredClone(remaining)
     let next = remainingCopy.shift()

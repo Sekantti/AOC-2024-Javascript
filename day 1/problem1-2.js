@@ -10,7 +10,7 @@ readFileSync('problem1.in', 'utf-8').split('\n').map(
 
 const similarity = lists[0].map((value) => {
     return value * lists[1].filter((secondListValue) => {
-        return secondListValue == value;
+        return secondListValue === value;
     }).length;
 }).reduce((l, r) => { return l + r });
 

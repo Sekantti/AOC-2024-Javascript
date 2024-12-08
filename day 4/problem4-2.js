@@ -11,13 +11,13 @@ function findSammas() {
     for (let i = 1; i < searchSpace.length - 1; i++) {
         for (let j = 1; j < searchSpace[0].length - 1; j++) {
             if (
-                searchSpace[i][j] == "A" && (
+                searchSpace[i][j] === "A" && (
                     (
-                        (searchSpace[i + 1][j + 1] == "M" && searchSpace[i - 1][j - 1] == "S") ||
-                        (searchSpace[i + 1][j + 1] == "S" && searchSpace[i - 1][j - 1] == "M")
+                        (searchSpace[i + 1][j + 1] === "M" && searchSpace[i - 1][j - 1] === "S") ||
+                        (searchSpace[i + 1][j + 1] === "S" && searchSpace[i - 1][j - 1] === "M")
                     ) && (
-                        (searchSpace[i + 1][j - 1] == "M" && searchSpace[i - 1][j + 1] == "S") ||
-                        (searchSpace[i + 1][j - 1] == "S" && searchSpace[i - 1][j + 1] == "M")
+                        (searchSpace[i + 1][j - 1] === "M" && searchSpace[i - 1][j + 1] === "S") ||
+                        (searchSpace[i + 1][j - 1] === "S" && searchSpace[i - 1][j + 1] === "M")
                     )
                 )
             ) {

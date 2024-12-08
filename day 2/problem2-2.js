@@ -13,12 +13,12 @@ reports.forEach((val) => {
         let increasing = variant[0] - variant[1] < 0;
         for (let j = 0; j < val.length - 2; j++) {
             let diff = variant[j] - variant[j + 1];
-            if (diff == 0 || Math.abs(diff) > 3 || increasing != (diff < 0)) {
+            if (diff === 0 || Math.abs(diff) > 3 || increasing !== (diff < 0)) {
                 successes--;
                 break;
             }
         }
-        if (successes == 0) {
+        if (successes === 0) {
             safe--;
             break;
         }
