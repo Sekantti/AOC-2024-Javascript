@@ -19,14 +19,6 @@ const files = input.split('').map((c, i) => {
     }
 });
 
-function prettyprint(files) {
-    let output = "";
-    for (let file of files) {
-        output += Array(file.length).fill(file.id).join("");
-    }
-    return output;
-}
-
 function rearrangeFiles(filesInput) {
     const files = filesInput;
 
