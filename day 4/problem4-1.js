@@ -7,38 +7,30 @@ readFileSync('problem4.in', 'utf-8').split('\n').forEach((val, i) => {
 
 const searchSpaceHorizontal = content.map(subArray => subArray.join(''));
 const searchSpaceVertical = content[0].map((_, colIndex) => content.map(row => row[colIndex]).join(''));
-const searchSpaceDiagTLBR = [];
-const searchSpaceDiagBLTP = [];
+const searchSpaceDiagTLBR = []
+const searchSpaceDiagBLTR = []
 const regeXmas = /xmas/gi;
 const samXeger = /samx/gi;
 
-for (let i = 0; i < content.length; i++) {
-    for (let j = 0; j < content[i].length; j++) {
-        const diagIndex = i + j;
-        searchSpaceDiagBLTP[diagIndex] = (searchSpaceDiagBLTP[diagIndex] || '') + content[i][j];
-    }
-}
-
-for (let i = 0; i < content.length; i++) {
-    for (let j = 0; j < content[i].length; j++) {
+content.map((row, i) => {
+    row.map((_, j) => {
         const diagIndex = content[i].length - 1 - j + i;
-        searchSpaceDiagTLBR[diagIndex] = (searchSpaceDiagTLBR[diagIndex] || '') + content[i][j];
-    }
-}
+        searchSpaceDiagTLBR[diagIndex] = (searchSpaceDiagTLBR[diagIndex] || '') + content[i][j];  
+    })
+});
 
-function length(array) {
-    if (Array.isArray(array)) {
-        return array.length;
-    } else {
-        return 0;
-    }
-}
+content.map((row, i) => {
+    row.map((_, j) => {
+        const diagIndex = i + j;
+        searchSpaceDiagBLTR[diagIndex] = (searchSpaceDiagBLTR[diagIndex] || '') + content[i][j];
+    })
+});
 
-function xmasSum(array) {
+function xmasSum(searchSpace) {
     let sum = 0;
-    array.forEach((subArray) => {
-            sum += length(subArray.match(regeXmas));
-            sum += length(subArray.match(samXeger));
+    searchSpace.forEach((row) => {
+        row.match(regeXmas) === null ? sum += 0 : sum += row.match(regeXmas).length
+        row.match(samXeger) === null ? sum += 0 : sum += row.match(samXeger).length
     });
     return sum;
 }
@@ -47,7 +39,7 @@ let sum = 0;
 
 sum += xmasSum(searchSpaceHorizontal);
 sum += xmasSum(searchSpaceVertical);
-sum += xmasSum(searchSpaceDiagBLTP);
+sum += xmasSum(searchSpaceDiagBLTR);
 sum += xmasSum(searchSpaceDiagTLBR);
 
 console.log(sum);

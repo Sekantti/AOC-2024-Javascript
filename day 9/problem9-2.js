@@ -15,9 +15,7 @@ const files = input.split('').map((c, i) => {
         }
 });
 
-function rearrangeFiles(filesInput) {
-    const files = filesInput;
-
+function rearrangeFiles(files) {
     for (let back = files.length - 1; back >= 0; back--) {
         const file = files[back];
         if (file.type == "blank") {

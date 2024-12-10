@@ -6,8 +6,7 @@ const files = input.map((num, index) => {
     return index % 2 == 0 ? Array(num).fill(index / 2) : Array(num).fill('.')
 }).flat();
 
-function rearrangeFiles(filesInput) {
-    const files = filesInput;
+function rearrangeFiles(files) {
     for (let i = files.length - 1; i >= 0; i--) {
         if (files[i] !== '.')
             for (let j = 0; j < files.length - 1; j++) {
