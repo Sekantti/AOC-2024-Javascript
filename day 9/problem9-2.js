@@ -5,14 +5,14 @@ const input = readFileSync('problem9.in', 'utf-8')
 const files = input.split('').map((c, i) => {
     const length = parseInt(c);
     return i % 2 == 0 ? {
-            id: i / 2,
-            length: length,
-            type: "file",
+        id: i / 2,
+        length: length,
+        type: "file",
     } : {
             id: '.',
             length: length,
             type: "blank",
-    }
+        }
 });
 
 function rearrangeFiles(filesInput) {
