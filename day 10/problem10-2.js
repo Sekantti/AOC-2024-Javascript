@@ -50,7 +50,6 @@ The sum of all trailhead ratings in this larger example topographic map is 81.
 */
 
 import { readFileSync } from 'fs';
-import path from 'path';
 
 const map = [];
 
@@ -59,39 +58,31 @@ readFileSync('problem10-example.in', 'utf-8').split('\n').forEach((row, i) => {
 });
 
 const trailheads = map.flatMap((row, i) =>
-    row.map((element, j) => (element === 0 ? [i, j] : null))
-).filter(item => item !== null);
+    row.flatMap((element, j) => (element === 0 ? [[i, j]] : []))
+)
 
-const endPoints = map.flat().filter((point) => point === 9).length
-
-function validDirections(i, j, map) { //works as expected
-    return [[i > 0 ? i - 1 : i, j], [i, j < map[j].length - 1 ? j + 1 : j], [i < map.length - 1 ? i + 1 : i, j], [i, j > 0 ? j - 1 : j]]
+function validMovements(i, j, map) {
+    const movements = []
+    i > 0 && map[i-1][j] - map[i][j] === 1 && movements.push([i-1, j]);
+    j < map[j].length-1 && map[i][j+1] - map[i][j] === 1 && movements.push([i, j+1]);
+    i < map.length-1 && map[i+1][j] - map[i][j] === 1 && movements.push([i+1, j])
+    j > 0 && map[i][j-1] - map[i][j] === 1 && movements.push([i, j-1])
+    return movements
 }
 
-function validStep(coord1, coord2, map) { //woks as expected
-    return map[coord1[0]][coord1[1]] === map[coord2[0]][coord2[1]] - 1
-}
-
-function existsValidMovement(directions, coord, map) { //works as expected
-    return validStep(coord, directions[0], map) || validStep(coord, directions[1], map) || validStep(coord, directions[2], map) || validStep(coord, directions[3], map)
-}
-
-function pathIsDifferent(path1, path2) {
-    if (path1.length !== path2.length) {
-        return true;
+function countReachablePeaks(coord, map) {
+    const steps = validMovements(coord[0], coord[1], map)
+    if (map[coord[0]][coord[1]] === 9) {
+        return 1;
     }
-    for (let i = 0; i < path1.length; i++) {
-        if (path1[i][0] !== path2[i][0] || path1[i][1] !== path2[i][1])
-        return true;
+    if (steps.length === 0) {
+        return 0;
     }
-    return false;
+    return steps.map((step) => {
+        return countReachablePeaks(step, map);
+    }).reduce((l, r) => { return l + r })
 }
 
-function pathIsUnique(paths, path) {
-    for (let i = 0; i < paths.length; i++) {
-        if (!pathIsDifferent(paths[i], path)) {
-            return false;
-        }
-    }
-    return true;
-}
+console.log(trailheads.map((trailhead) => {
+    return countReachablePeaks(trailhead, map);
+}).reduce((l, r) => { return l + r }));

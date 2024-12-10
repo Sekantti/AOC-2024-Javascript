@@ -9,8 +9,7 @@ readFileSync('problem8.in', 'utf-8').split('\n').forEach((row, i) => {
 const antennas = searchSpaceGlbl.flat().filter((element) => element !== '.').filter((element, i, antennas) => antennas.indexOf(element) === i);
 const indices = antennas.map((antenna) => {
     return searchSpaceGlbl.flatMap((row, i) =>
-        row.map((element, j) => (element === antenna ? [i, j] : null))
-    ).filter(item => item !== null)
+        row.flatMap((element, j) => (element === antenna ? [[i, j]] : [])))
 });
 
 function addAntinode(pair, set) {
