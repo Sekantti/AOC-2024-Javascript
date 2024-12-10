@@ -4,18 +4,14 @@ const input = readFileSync('problem9.in', 'utf-8')
 
 const files = input.split('').map((c, i) => {
     const length = parseInt(c);
-    if (i % 2 == 0) {
-        return {
+    return i % 2 == 0 ? {
             id: i / 2,
             length: length,
             type: "file",
-        }
-    } else {
-        return {
+    } : {
             id: '.',
             length: length,
             type: "blank",
-        }
     }
 });
 
@@ -48,19 +44,8 @@ function rearrangeFiles(filesInput) {
     return files;
 }
 
-function calculateChecksum(files) {
-    let checkSum = 0;
-    let index = 0;
-
-    files.forEach((file) => {
-        if (file.type === "file") {
-            const fileChecksum = file.id * (2 * index + file.length - 1) * file.length / 2;
-            checkSum += fileChecksum;
-        }
-        index += file.length;
-    })
-
-    return checkSum;
-}
-
-console.log(calculateChecksum(rearrangeFiles(files)))
+console.log(rearrangeFiles(files).map((file) => {
+    return Array(file.length).fill(file.id)
+}).filter(file => file.length !== 0).flat().map((file, index) => {
+    return file !== '.' ? file * index : 0
+}).reduce((l, r) => { return l + r }));
