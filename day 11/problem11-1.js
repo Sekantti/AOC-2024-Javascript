@@ -24,11 +24,10 @@ function findLength(stones, index) {
     for (let i = 0; i < stones.length; i++) {
         //console.log(stones[i])
         if (stones[i] === 0) {
-            console.log("stones[i] is 0 " + 0)
+            //console.log("stones[i] is 0 " + 0)
             length += findLength([1], newIndex)
         }
         else if (stones[i].toString().length % 2 === 0) {
-            .("[i] has an even mumber of digits " + stones[i])
             const numStr = stones[i].toString()
             const mid = numStr.length / 2
             const firstHalf = numStr.slice(0, mid)
@@ -36,7 +35,7 @@ function findLength(stones, index) {
             length += findLength([firstHalf, secondHalf].flatMap((num) => { return parseInt(num) }), newIndex)
         }
         else {
-            console.log("neither above condition applies")
+            //console.log("neither above condition applies")
             length += findLength([stones[i]*2024], newIndex)
         }
     }
