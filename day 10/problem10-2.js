@@ -13,7 +13,7 @@ const trailheads = map.flatMap((row, i) =>
 function validMovements(i, j, map) {
     const movements = []
     i > 0 && map[i-1][j] - map[i][j] === 1 && movements.push([i-1, j]);
-    j < map[j].length-1 && map[i][j+1] - map[i][j] === 1 && movements.push([i, j+1]);
+    j < map[i].length-1 && map[i][j+1] - map[i][j] === 1 && movements.push([i, j+1]);
     i < map.length-1 && map[i+1][j] - map[i][j] === 1 && movements.push([i+1, j])
     j > 0 && map[i][j-1] - map[i][j] === 1 && movements.push([i, j-1])
     return movements
