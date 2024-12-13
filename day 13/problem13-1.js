@@ -8,17 +8,25 @@ const regexpButtonB = /Button B: (.+?)\n/g
 
 const prizes = input.match(regexpLocations).map((string) => {
     return string.match(/\d+/g)
+}).map((prize) => {
+    return prize.map((coordinate) => {
+        return parseInt(coordinate)
+    })
 })
 const buttonsA = input.match(regexpButtonA).map((string) => {
     return string.match(/\d+/g)
+}).map((button) => {
+    return button.map((coordinate) => {
+        return parseInt(coordinate)
+    })
 })
 const buttonsB = input.match(regexpButtonB).map((string) => {
     return string.match(/\d+/g)
+}).map((button) => {
+    return button.map((coordinate) => {
+        return parseInt(coordinate)
+    })
 })
-
-// console.log(prizes)
-// console.log(buttonsA)
-// console.log(buttonsB)
 
 function solveSimultaneousEquation(prize, buttonA, buttonB) {
     const x = (buttonB[0] * prize[1] - buttonB[1] * prize[0]) / (buttonA[1] * buttonB[0] - buttonA[0] * buttonB[1])
@@ -33,8 +41,6 @@ function validSolution(solution) {
     }
     return false
 }
-
-//console.log(solveSimultaneousEquation(prizes[2], buttonsA[2], buttonsB[2]))
 
 function getPrizesCost(prizes, buttonsA, buttonsB) {
     const solutions = []
