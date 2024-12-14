@@ -2,13 +2,11 @@ import { readFileSync } from 'fs';
 
 const input = [];
 
-readFileSync('problem11.in', 'utf-8').split('\n').forEach((row, i) => {
+readFileSync('problem11-example.in', 'utf-8').split('\n').forEach((row, i) => {
     input[i] = row.split(' ').map(num => parseInt(num));
 });
 
 const stones = input.flat(1)
-
-const results = {}
 
 function addEntry(element, index, result, results) { //this does what I need
     results[element + "," + index] = result
@@ -39,22 +37,21 @@ function next(stone) {
 
 function findLength(stone, index, results) {
     if (index === 0) {
-        return 1;
+        return 1
     }
     if (hasEntry(stone, index, results)) {
-        const result = results[stone + "," + index]
-        return result
-    } 
+        return results[stone + "," + index]
+    }
+    let result = 0
     const nextStone = next(stone)
     if (Array.isArray(nextStone)) {
         const result1 = findLength(nextStone[0], index - 1, results)
         const result2 = findLength(nextStone[1], index - 1, results)
-        addEntry(nextStone[0], index - 1, result1, results)
-        addEntry(nextStone[1], index - 1, result2, results)
-        return result1 + result2
+        result = result1 + result2
+    } else {
+        result = findLength(nextStone, index-1, results)
     }
-    const result = findLength(nextStone, index-1, results)
-    addEntry(nextStone, index-1, result, results)
+    addEntry(stone, index, result, results)
     return result
 }
 
@@ -64,9 +61,9 @@ function findAllLength(stones, index) {
 
     for (let stone of stones) {
         length += findLength(stone, index, results)
-        }
+    }
 
     return length
 }
 
-console.log(findAllLength(stones, 75))
+console.log(findAllLength(stones, 25))

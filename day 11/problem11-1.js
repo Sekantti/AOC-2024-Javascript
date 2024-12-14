@@ -10,9 +10,9 @@ const stones = input.flat(1)
 
 function splitNumber(number) {
     const numStr = number.toString()
-            const mid = numStr.length/2
-            const firstHalf = numStr.slice(0, mid)
-            const secondHalf = numStr.slice(mid)
+    const mid = numStr.length/2
+    const firstHalf = numStr.slice(0, mid)
+    const secondHalf = numStr.slice(mid)
 
     return [parseInt(firstHalf), parseInt(secondHalf)]
 }
