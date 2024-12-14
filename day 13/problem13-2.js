@@ -35,10 +35,7 @@ function solveSimultaneousEquation(prize, buttonA, buttonB) {
 }
 
 function validSolution(solution) {
-    if (Number.isInteger(solution[0]) && Number.isInteger(solution[1])) {
-        return true
-    }
-    return false
+    return Number.isInteger(solution[0]) && Number.isInteger(solution[1])
 }
 
 function getPrizesCost(prizes, buttonsA, buttonsB) {
