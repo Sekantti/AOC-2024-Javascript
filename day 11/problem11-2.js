@@ -9,11 +9,11 @@ readFileSync('problem11-example.in', 'utf-8').split('\n').forEach((row, i) => {
 const stones = input.flat(1)
 
 function addEntry(element, index, result, results) { //this does what I need
-    results[element + "," + index] = result
+    results[[element, index]] = result
 }
 
 function hasEntry(element, index, results) { //this does what I need
-    return element + "," + index in results;
+    return [element, index] in results;
 }
 
 function splitNumber(number) {
@@ -25,42 +25,37 @@ function splitNumber(number) {
     return [parseInt(firstHalf), parseInt(secondHalf)]
 }
 
-function next(stone) {
-    if (stone === 0) {
-        return 1
+function findLengthCached(stone, index, cache) {
+    if (hasEntry(stone, index, cache)) {
+        return cache[[stone, index]]
     }
-    if (stone.toString().length % 2 === 0) {
-        return splitNumber(stone)
-    }
-    return stone*2024
-}
-
-function findLength(stone, index, results) {
-    if (index === 0) {
-        return 1
-    }
-    if (hasEntry(stone, index, results)) {
-        return results[stone + "," + index]
-    }
-    let result = 0
-    const nextStone = next(stone)
-    if (Array.isArray(nextStone)) {
-        const result1 = findLength(nextStone[0], index - 1, results)
-        const result2 = findLength(nextStone[1], index - 1, results)
-        result = result1 + result2
-    } else {
-        result = findLength(nextStone, index-1, results)
-    }
-    addEntry(stone, index, result, results)
+    const result = findLength(stone, index, cache)
+    addEntry(stone, index, result, cache)
     return result
 }
 
+function findLength(stone, index, cache) {
+    if (index === 0) {
+        return 1
+    }
+    if (stone === 0) {
+        return findLengthCached(1, index - 1, cache)
+    }
+    if (stone.toString().length % 2 === 0) {
+        const nextStones = splitNumber(stone)
+        const result1 = findLengthCached(nextStones[0], index - 1, cache)
+        const result2 = findLengthCached(nextStones[1], index - 1, cache)
+        return result1 + result2
+    }
+    return findLengthCached(stone * 2024, index - 1, cache)
+}
+
 function findAllLength(stones, index) {
-    const results = {}
+    const cache = {}
     let length = 0
 
     for (let stone of stones) {
-        length += findLength(stone, index, results)
+        length += findLength(stone, index, cache)
     }
 
     return length
