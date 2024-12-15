@@ -14,7 +14,7 @@ function validDirections(coord, map) { //works as expected
     if (coord[1] < map[coord[0]].length - 1) {
         directions.push([coord[0], coord[1] + 1])
     }
-    if (coord[0] < map.length-1) {
+    if (coord[0] < map.length - 1) {
         directions.push([coord[0] + 1, coord[1]])
     }
     if (coord[1] > 0) {
@@ -81,115 +81,156 @@ function findRegions(map) { //works as expected
     return regions
 }
 
-function getNumberOfSides(coordinates, map) { //works as expected
-    let sides = 1;
+function findMaxAndMin(coordinates) { //works as expected 
+    const xCoordinates = coordinates.map((coordinate) => coordinate[0])
+    const yCoordinates = coordinates.map((coordinate) => coordinate[1])
 
-    for (let coordinate of coordinates) {
+    return [[Math.min(...xCoordinates), Math.max(...xCoordinates)],
+    [Math.min(...yCoordinates), Math.max(...yCoordinates)]]
+}
 
+const region0 = findRegions(map)[0]
+
+
+function sortRegionByIndex(coordinates, maxAndMin, axis) {
+    console.log(maxAndMin)
+    const sortedRegion = [];
+    const diff = Math.abs(maxAndMin[0] - maxAndMin[1]);
+    console.log(diff)
+
+    for (let index = 0; index <= diff; index++) {
+        console.log(index)
+        sortedRegion[index] = coordinates.filter((coordinate) => {
+            return coordinate[axis] === diff - index;
+        });
+        console.log(sortedRegion[index])
     }
 
-    for (let coordinate of coordinates) {
-        const nextGardenPlots = nextGardenPlotsMatch(map[coordinate[0]][coordinate[1]], coordinate, map)
-        if (nextGardenPlots === 0) {
-            sides += 4
+    return sortedRegion;
+}
+
+function sortRegionByIndexVertical(coordinates, maxAndMin) {
+    return sortRegionByIndex(coordinates, maxAndMin[0], 0).map((indices) => {
+        return indices.sort(([x1, y1], [x2, y2]) => {
+            return y1 - y2
+        });
+    });
+}
+
+function sortRegionByIndexHorizontal(coordinates, maxAndMin) {
+    return sortRegionByIndex(coordinates, maxAndMin[1], 1).map((indices) => {
+        return indices.sort(([x1, y1], [x2, y2]) => {
+            return x1 - x2
+        });
+    });
+}
+
+console.log(sortRegionByIndexHorizontal([
+    [ 0, 4 ], [ 0, 5 ], [ 1, 5 ], [ 1, 4 ]
+  ], [
+    [ 0, 1 ], [ 4, 5 ]
+  ]))
+
+function nextGardenPlotDirectional(coordinate, direction) {
+    const x = coordinate[0]
+    const y = coordinate[1]
+    const plantType = map[x][y]
+    if (direction === "up") {
+        return plantType === map[x - 1][y]
+    }
+    if (direction === "right") {
+        return plantType === map[x][y + 1]
+    }
+    if (direction === "down") {
+        return plantType === map[x + 1][y]
+    }
+    if (direction === "left") {
+        return plantType === map[x][y - 1]
+    }
+}
+
+//console.log(sortRegionByIndexVertical(region0, maxAndMin)) //[0] gives the set of indices on aline, [0][0] gives
+//the first index, [0][0][0] gives the first digit of the first index
+
+function findSides(line, map, direction) { //expects a set of coordinates, a 2-d grid, and a string (up, down, left or right)
+    const boundaries = {
+        "up": line[0][0] === 0,
+        "down": line[0][0] === map.length - 1,
+        "left": line[0][1] === 0,
+        "right": line[0][1] === map[0].length - 1
+    };
+    if (boundaries[direction]) {
+        return 0;
+    }
+
+    const neighborOffsets = {
+        "up": [-1, 0],
+        "down": [1, 0],
+        "left": [0, -1],
+        "right": [0, 1]
+    };
+    const [dx, dy] = neighborOffsets[direction];
+
+    if (line.filter(([x, y]) => map[x][y] !== map[x + dx][y + dy]).length === 0) {
+        return 0;
+    }
+
+    let sides = nextGardenPlotDirectional(line[0], direction) ? 0 : 1;
+    for (let index = 1; index < line.length; index++) {
+        const [x1, y1] = line[index - 1];
+        const [x2, y2] = line[index];
+
+        if ((direction === "up" || direction === "down") && y2 !== y1 + 1 && map[x2 + dx][y2] !== map[x2][y2]) {
+            sides++;
+            continue;
         }
-        if (nextGardenPlots === 1) {
-            sides += 3
+        if ((direction === "left" || direction === "right") && x2 !== x1 + 1 && map[x2][y2 + dy] !== map[x2][y2]) {
+            sides++;
+            continue;
         }
-        if (nextGardenPlots === 2) {
-            sides += 2
-        }
-        if (nextGardenPlots === 3) {
-            sides += 1
-        }
-        if (nextGardenPlots === 4) {
-            sides += 0
+        if (map[x2][y2] !== map[x2 + dx][y2 + dy] && sides === 0) {
+            sides++;
+            continue;
         }
     }
 
-    return sides
+    return sides;
+} //seems to be working
+
+
+function findAllSidesForRegion(region, map) {
+    const maxAndMin = findMaxAndMin(region)
+    console.log(maxAndMin)
+    const regionSortedHor = sortRegionByIndexHorizontal(region, maxAndMin)
+    console.log(regionSortedHor)
+    const regionSorterVert = sortRegionByIndexVertical(region, maxAndMin)
+    console.log(regionSorterVert)
+
+    const leftSides = regionSortedHor.map((column) => {
+        return findSides(column, map, "left")
+    }).reduce((l, r) => {return l + r});
+    const rightSides = regionSortedHor.map((column) => {
+        return findSides(column, map, "right")
+    }).reduce((l, r) => {return l + r});
+    const upSides = regionSorterVert.map((row) => {
+        return findSides(row, map, "up")
+    }).reduce((l, r) => {return l + r});
+    const downSides = regionSorterVert.map((row) => {
+        return findSides(row, map, "down")
+    }).reduce((l, r) => {return l + r});
+
+    return leftSides + rightSides + upSides + downSides
 }
 
-function isContiguous(coord1, coord2) { //works as expected
-    return coord1[0] === coord2[0] || coord1[1] === coord2[1]
+function findAllSidesAllRegions(map) {
+    const regions = findRegions(map);
+    return regions.map((region) => {
+        console.log(region)
+        return findAllSidesForRegion(region, map)
+    }).reduce((l, r) => {return l+r})
 }
 
-function isContiguousHorizontal(coord1, coord2) {
-    return coord1[0] === coord2[0]
-}
-
-function isContiguousVertical(coord1, coord2) {
-    return coord1[1] === coord2[1]
-}
-
-console.log([isContiguousHorizontal([0, 0], [0, 1]), isContiguousVertical([0, 0], [0, 1])])
-
-function findContiguous(coordinates, coord) {
-    const contiguous = []
-    for (let coordinate of coordinates) {
-        if (isContiguous(coordinate, coord)) {
-            contiguous.push(coordinate)
-        }
-    }
-
-}
-
-/*const shape = [[ 0, 4 ], [ 0, 5 ], [ 1, 5 ], [ 1, 4 ]]
-let edges = 0;
-let firstNode;
-let index = 0;
-
-
-
-while (edges = 0) {
-    const nextPlots = nextGardenPlotsMatch(map[shape[i][0]][shape[i][1]], shape[i], map)
-    if (nextPlots === 4) {
-        i++
-        shape.splice(shape.indexOf(shape[i]), 1)
-        continue;
-    }
-    edges = nextPlots;
-    firstNode = shape[i]
-}
-
-if */
-
- 
-
-function howManyContiguous(coordinates, coord) {
-    let contiguous = 0
-
-    for (let coordinate of coordinates) {
-        if (isContiguous(coordinate, coord)) {
-            contiguous++
-        }
-    }
-    
-    return contiguous
-}
-
-/*console.log(howManyContiguous([
-    [ 0, 0 ], [ 0, 1 ], [ 0, 2 ], [ 0, 3 ], [ 1, 3 ], [ 2, 3 ], [ 2,
-      4
-    ], [ 2, 2 ], [ 1, 2 ], [ 1, 1 ], [ 1, 0 ], [ 3, 2 ]
-  ], [0, 1]))
-
-function getNumberOfSides(inputCoordinates, map) {
-    const coordinates = structuredClone(inputCoordinates)
-    let sides = 0;
-
-    for (let coordinate of coordinates) {
-        if (nextGardenPlotsMatch(map[coordinate[0]][coordinate[1]], coordinate, map) === 4) {
-            coordinates.splice(coordinates.indexOf(coordinate), 1)
-        }
-    }
-
-
-
-
-
-}*/
-
+//console.log(findAllSidesAllRegions(map))
 
 
 
@@ -198,7 +239,7 @@ function getPrice(map) {
     let price = 0;
 
     for (let region of regions) {
-        price += region.length*getNumberOfSides(region, map);
+        price += region.length * getNumberOfSides(region, map);
     }
 
     return price;
