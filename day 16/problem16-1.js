@@ -106,38 +106,122 @@ map.forEach((row) => {
 });
 
 function prettyPrint(twoDArray) {
-    return map.map((row) => {
+    return twoDArray.map((row) => {
         return row.join('')
     }).join('\n')
 }
 
-console.log(goal)
-
-// function directionMove(directionSymbol) {
+// function directionMove(directionString) { // expects direction input as string
 //     const direction = {
-//         '^': [-1, 0],
-//         '>': [0, 1],
-//         'v': [1, 0],
-//         '<': [0, -1]
+//         'up': [-1, 0],
+//         'right': [0, 1],
+//         'down': [1, 0],
+//         'left': [0, -1]
 //     }
 
-//     return direction[directionSymbol]
+//     return direction[directionString]
 // }
 
-// function nextWall([x, y], direction, map) {
-//     const [dx, dy] = directionMove(direction)
+function turnClockwise(direction) { //expects direction input as array
+    const clockwiseTurn = {
+        "-1,0": [0, 1],
+        "0,1" : [1, 0],
+        "1,0": [0, -1],
+        "0,-1" : [-1, 0]
 
-//     for (let i = 1; i < map.length; i++) {
-//         const [newX, newY] = [x + i * dx, y + i * dy];
-//         if (map[newX][newY] === '#') {
-//             return [null, null];
-//         }
-//         if (map[newX][newY] === '.') {
-//             return [newX, newY]
-//         }
+    }
+    return clockwiseTurn[direction + '']
+}
+
+
+function turnAntiClockwise(direction) { //expects direction input as array
+    const antiClockwiseTurn = {
+        "-1,0": [0, -1],
+        "0,1" : [-1, 0],
+        "1,0": [0, 1],
+        "0,-1" : [1, 0]
+
+    }
+    return antiClockwiseTurn[direction + '']
+}
+
+function isDeadEnd([x, y], map) {
+    return map[x-1][y] === '#' && map[x][y-1] === '#' && map[x+1][y] === '#' && map[x][y+1] === '#'
+}
+
+function canMove([x, y], [dx, dy], map) {
+    if (map[x+dx][y+dy] === '#') {
+        return false;
+    }
+    return true;
+}
+
+function validMoves([x, y], [dx, dy], map) {
+    const [[dxc, dyc], [dxa, dya]] = [turnClockwise([dx, dy]), turnAntiClockwise([dx, dy])]
+    const movements = []
+    map[x+dx][y+dy] !== '#' && movements.push([dx, dy])
+    map[x + dxc][y+dyc] !== '#'&& movements.push([dxc, dyc])
+    map[x + dxa][y+dya] !== '#'&& movements.push([dxa, dya])
+    return movements;
+}
+
+console.log(validMoves([13, 1], [0, 1], map))
+
+// function validMovements(i, j, map) {
+
+//     i > 0 && map[i-1][j] - map[i][j] === 1 && movements.push([i-1, j]);
+//     j < map[i].length-1 && map[i][j+1] - map[i][j] === 1 && movements.push([i, j+1]);
+//     i < map.length-1 && map[i+1][j] - map[i][j] === 1 && movements.push([i+1, j])
+//     j > 0 && map[i][j-1] - map[i][j] === 1 && movements.push([i, j-1])
+//     return movements
+// }
+
+// function solve([x, y], [dx, dy], map, turn, steps) {
+//     const validMovements = validMoves
+//     if (mo)
+//     map[x][y] = '#'
+//     if (map[x][y] === 'E') {
+//         map[x][y] = '.'
+//         return steps+turn;
 //     }
-
-//     return [null, null];
+//     // if (isDeadEnd([x,y], map)) {
+//     //     map[x][y] = '.';
+//     //     return 1000000000000000;
+//     // }
+//     const [dxa, dya] = turnAntiClockwise([dx, dy])
+//     const [dxc, dyc] = turnClockwise([dx, dy])
+//     if (canMove([x, y], [dx, dy], map)) {
+//         return Math.min(
+//             solve([x+dx, y+dy], [dx, dy], map, turn, steps+1),
+//             solve([x+dxa, y+dya],[dxa, dya], map, turn+1000, steps),
+//             solve([x + dxc, y+ dyc], [dxc, dyc], map, turn+1000, steps)
+//         )
+//     }
+//     return Math.min(
+//         solve([x+dxa, y+dya],[dxa, dya], map, turn+1000, steps),
+//         solve([x + dxc, y+ dyc], [dxc, dyc], map, turn+1000, steps)
+//     );
 // }
 
-console.log(initialPosition)
+
+function solve([x, y], [dx, dy], map, steps, turns) {
+    const newMap = structuredClone(map)
+    if (isDeadEnd([x, y], map)) {
+        return 1000000000000;
+    }
+    // if (newMap[x][y] === '#') {
+    //     return 1000000000000;
+    // }
+    if (newMap[x][y] === 'E') {
+        map
+        return steps + turns;
+    }
+    newMap[x][y] = '#'
+    Math.min(
+        canMove([x, y], [dx, dy], map) ? solve([x+dx], [dx, dy], map, steps+1, turns) : 1000000000000,
+        canMove([x, y], turnClockwise([dx, dy]), map) ? solve([x)
+    )
+
+}
+
+console.log(solve([13, 1], [0, 1], map))
