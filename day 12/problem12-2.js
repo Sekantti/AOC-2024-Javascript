@@ -173,20 +173,6 @@ function findSides(line, map, direction) { //expects a set of coordinates, a 2-d
     return sides;
 } //seems to be working
 
-function prettyPrint(map) {
-    const newMap = map.map((row) => {
-        return row.map((element) => {
-            if (element === 'R') {
-                return element
-            }
-            return '.'
-        })
-    })
-    return newMap.map((row) => {
-        return row.join('')
-    }).join('\n')
-}
-
 function findAllSidesForRegion(region, map) {
     const maxAndMin = findMaxAndMin(region)
     const regionSortedHor = sortRegionByIndexHorizontal(region, maxAndMin)
