@@ -165,8 +165,6 @@ function validMoves([x, y], [dx, dy], map) {
     return movements;
 }
 
-console.log(validMoves([13, 1], [0, 1], map))
-
 // function validMovements(i, j, map) {
 
 //     i > 0 && map[i-1][j] - map[i][j] === 1 && movements.push([i-1, j]);
@@ -178,7 +176,7 @@ console.log(validMoves([13, 1], [0, 1], map))
 
 // function solve([x, y], [dx, dy], map, turn, steps) {
 //     const validMovements = validMoves
-//     if (mo)
+//     if (mo)+
 //     map[x][y] = '#'
 //     if (map[x][y] === 'E') {
 //         map[x][y] = '.'
@@ -209,17 +207,15 @@ function solve([x, y], [dx, dy], map, steps, turns) {
     if (isDeadEnd([x, y], map)) {
         return 1000000000000;
     }
-    // if (newMap[x][y] === '#') {
-    //     return 1000000000000;
-    // }
     if (newMap[x][y] === 'E') {
-        map
+        console.log("endpoint reached")
         return steps + turns;
     }
     newMap[x][y] = '#'
     Math.min(
-        canMove([x, y], [dx, dy], map) ? solve([x+dx], [dx, dy], map, steps+1, turns) : 1000000000000,
-        canMove([x, y], turnClockwise([dx, dy]), map) ? solve([x)
+        canMove([x, y], [dx, dy], newMap) ? solve([x+dx, y+dy], [dx, dy], newMap, steps+1, turns) : 1000000000000,
+        canMove([x, y], turnClockwise([dx, dy]), newMap) ? solve([x, y], turnClockwise([dx, dy]), newMap, steps, turns+1000) : 1000000000000,
+        canMove([x, y], turnAntiClockwise([dx, dy]), newMap) ? solve([x, y], turnAntiClockwise([dx, dy]), newMap, steps, turns+1000) : 1000000000000
     )
 
 }

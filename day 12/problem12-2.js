@@ -89,21 +89,14 @@ function findMaxAndMin(coordinates) { //works as expected
     [Math.min(...yCoordinates), Math.max(...yCoordinates)]]
 }
 
-const region0 = findRegions(map)[0]
-
-
 function sortRegionByIndex(coordinates, maxAndMin, axis) {
-    console.log(maxAndMin)
     const sortedRegion = [];
     const diff = Math.abs(maxAndMin[0] - maxAndMin[1]);
-    console.log(diff)
 
     for (let index = 0; index <= diff; index++) {
-        console.log(index)
         sortedRegion[index] = coordinates.filter((coordinate) => {
-            return coordinate[axis] === diff - index;
+            return coordinate[axis] === maxAndMin[0] + diff - index;
         });
-        console.log(sortedRegion[index])
     }
 
     return sortedRegion;
@@ -125,11 +118,13 @@ function sortRegionByIndexHorizontal(coordinates, maxAndMin) {
     });
 }
 
-console.log(sortRegionByIndexHorizontal([
-    [ 0, 4 ], [ 0, 5 ], [ 1, 5 ], [ 1, 4 ]
-  ], [
-    [ 0, 1 ], [ 4, 5 ]
-  ]))
+//console.log(sortRegionByIndexHorizontal(region1, findMaxAndMin(region1)))
+
+// console.log(sortRegionByIndexHorizontal([
+//     [ 0, 4 ], [ 0, 5 ], [ 1, 5 ], [ 1, 4 ]
+//   ], [
+//     [ 0, 1 ], [ 4, 5 ]
+//   ]))
 
 function nextGardenPlotDirectional(coordinate, direction) {
     const x = coordinate[0]
@@ -160,8 +155,8 @@ function findSides(line, map, direction) { //expects a set of coordinates, a 2-d
         "right": line[0][1] === map[0].length - 1
     };
     if (boundaries[direction]) {
-        return 0;
-    }
+        return 1;
+    } //this logic is good and simple
 
     const neighborOffsets = {
         "up": [-1, 0],
@@ -169,24 +164,37 @@ function findSides(line, map, direction) { //expects a set of coordinates, a 2-d
         "left": [0, -1],
         "right": [0, 1]
     };
-    const [dx, dy] = neighborOffsets[direction];
+    const [dx, dy] = neighborOffsets[direction]; // this logic should  be good and simple
 
-    if (line.filter(([x, y]) => map[x][y] !== map[x + dx][y + dy]).length === 0) {
+    if (line.filter(([x, y]) => map[x][y] !== map[x + dx][y + dy]).length === 0) { //this should check that there is at least one plot bordered in the specified direction by a different plant
         return 0;
     }
 
-    let sides = nextGardenPlotDirectional(line[0], direction) ? 0 : 1;
+    const [x, y] = line[0];
+    let sides = map[x][y] !== map[x + dx][y + dy] ? 1 : 0
     for (let index = 1; index < line.length; index++) {
         const [x1, y1] = line[index - 1];
         const [x2, y2] = line[index];
 
-        if ((direction === "up" || direction === "down") && y2 !== y1 + 1 && map[x2 + dx][y2] !== map[x2][y2]) {
-            sides++;
-            continue;
+        if ((direction === "up" || direction === "down")) { //the y2 !== y1+1 logic is WRONG (I think)
+            if (y2 !== y1 + 1 && map[x2 + dx][y2 + dy] !== map[x2][y2]) {
+                sides++;
+                continue;
+            }
+            if (map[x1 + dx][y1 + dy] === map[x1][y1] && map[x2 + dx][y2 + dy] !== map[x2][y2]) {
+                sides++;
+                continue
+            }
         }
-        if ((direction === "left" || direction === "right") && x2 !== x1 + 1 && map[x2][y2 + dy] !== map[x2][y2]) {
-            sides++;
-            continue;
+        if ((direction === "left" || direction === "right")) {
+            if (x2 !== x1 + 1 && map[x2 + dx][y2 + dy] !== map[x2][y2]) {
+                sides++;
+                continue;
+            }
+            if (map[x1 + dx][y1 + dy] === map[x1][y1] && map[x2 + dx][y2 + dy] !== map[x2][y2]) {
+                sides++;
+                continue
+            }
         }
         if (map[x2][y2] !== map[x2 + dx][y2 + dy] && sides === 0) {
             sides++;
@@ -198,39 +206,48 @@ function findSides(line, map, direction) { //expects a set of coordinates, a 2-d
 } //seems to be working
 
 
+function prettyPrint(map) {
+    const newMap = map.map((row) => {
+        return row.map((element) => {
+            if (element === 'C') {
+                return element
+            }
+            return '.'
+        })
+    })
+    return newMap.map((row) => {
+        return row.join('')
+    }).join('\n')
+}
+
+console.log(prettyPrint(map))
+
+const region = findRegions(map)[2]
+const regionSortedHor = sortRegionByIndexHorizontal(region, findMaxAndMin(region))
+
+console.log(findAllSidesForRegion(region, map))
+
 function findAllSidesForRegion(region, map) {
     const maxAndMin = findMaxAndMin(region)
-    console.log(maxAndMin)
     const regionSortedHor = sortRegionByIndexHorizontal(region, maxAndMin)
-    console.log(regionSortedHor)
-    const regionSorterVert = sortRegionByIndexVertical(region, maxAndMin)
-    console.log(regionSorterVert)
+    const regionSortedVert = sortRegionByIndexVertical(region, maxAndMin)
 
     const leftSides = regionSortedHor.map((column) => {
         return findSides(column, map, "left")
-    }).reduce((l, r) => {return l + r});
+    }).reduce((l, r) => { return l + r });
     const rightSides = regionSortedHor.map((column) => {
         return findSides(column, map, "right")
-    }).reduce((l, r) => {return l + r});
-    const upSides = regionSorterVert.map((row) => {
+    }).reduce((l, r) => { return l + r });
+    const upSides = regionSortedVert.map((row) => {
         return findSides(row, map, "up")
-    }).reduce((l, r) => {return l + r});
-    const downSides = regionSorterVert.map((row) => {
+    }).reduce((l, r) => { return l + r });
+    const downSides = regionSortedVert.map((row) => {
         return findSides(row, map, "down")
-    }).reduce((l, r) => {return l + r});
+    }).reduce((l, r) => { return l + r });
 
     return leftSides + rightSides + upSides + downSides
 }
 
-function findAllSidesAllRegions(map) {
-    const regions = findRegions(map);
-    return regions.map((region) => {
-        console.log(region)
-        return findAllSidesForRegion(region, map)
-    }).reduce((l, r) => {return l+r})
-}
-
-//console.log(findAllSidesAllRegions(map))
 
 
 
@@ -239,10 +256,26 @@ function getPrice(map) {
     let price = 0;
 
     for (let region of regions) {
-        price += region.length * getNumberOfSides(region, map);
+        price += region.length * findAllSidesForRegion(region, map);
     }
 
     return price;
 }
 
 //console.log(getPrice(map))
+/*
+
+
+
+
+A region of R plants with price 12 * 10 = 120. CORRECT SIDES
+A region of I plants with price 4 * 4 = 16. Correct SIDes
+A region of C plants with price 14 * 22 = 308. CORRECT SIDES
+A region of F plants with price 10 * 12 = 120. SIDES UNDERCOUNTER BY 2
+A region of V plants with price 13 * 10 = 130. SIDES UNDERCOUNTED BY 1
+A region of J plants with price 11 * 12 = 132. SIDES UNDERCOUNTED BY 2
+A region of C plants with price 1 * 4 = 4. CORRECT SIDES
+A region of E plants with price 13 * 8 = 104. CORRECT SIDES
+A region of I plants with price 14 * 16 = 224. SIDES UNDERCOUNTED BY 1
+A region of M plants with price 5 * 6 = 30. CORRECT SIDES
+A region of S plants with price 3 * 6 = 18. CORRECT SIDES*/
