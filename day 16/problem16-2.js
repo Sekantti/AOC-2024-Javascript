@@ -57,7 +57,7 @@ function solve(location, direction, map) {
     let minCost = 0
     while (true) {
         const [[x, y], [dx, dy], cost] = priority_pop()
-        if (cost > minCost) {
+        if (cost > minCost && minCost !== 0) {
             break;
         }
         if ([[x,y], [dx, dy]] in seen) {
