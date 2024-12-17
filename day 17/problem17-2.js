@@ -48,13 +48,12 @@ const opCodes = {
     },
     2: function (operIn) {
         const operand = operands[operIn].combo
-        const result = operand & 7
-        registers["B"] = result;
+        registers["B"] = operand & 7;
         return -1
     },
     3: function (operIn) {
         if (registers["A"] === 0) {
-            return -1;
+            return null;
         }
         return operands[operIn].lit;
     },
@@ -81,7 +80,7 @@ const opCodes = {
 }
 
 function updatePointer(pointer, value) {
-    if (value === -1) {
+    if (value === null) {
         return pointer+2
     }
     return value;
@@ -92,6 +91,7 @@ function solve(input, instructions) {
     updateOperands()
     let pointer = 0;
     let output = ''
+    console.log(instructions)
     
     while (true) {
         if (pointer >= instructions.length) {
@@ -110,11 +110,47 @@ function solve(input, instructions) {
             output += result + ',';
         }
 
-        pointer = updatePointer(pointer, -1)
+        pointer = updatePointer(pointer, null)
         updateOperands()
     }
 } 
 
-const result = solve(input, instructions)
-console.log(registers)
-console.log(result)
+// const result = solve(input, instructions)
+// console.log(registers)
+// console.log(result)
+
+
+
+//2, 4: B = A%8
+//1, 5: B = 5^(A%8)
+//7, 5: C = Math.floor(A/(2**(5^(A%8))))
+//4, 3: B = (5^(A%8))^Math.floor(A/(2**(5^(A%8))))
+//1, 6: B = ((5^(A%8))^Math.floor(A/(2**(5^(A%8)))))^6
+//0, 3: A = Math.floor(A/(2**3))
+//5, 5: output += (((5^(A%8))^Math.floor(A/(2**(5^(A%8)))))^6)%8
+//3, 0: start again.
+
+
+function solve2(input) {
+    let A = input;
+
+    while (A !== 0) {
+        console.log((((5^(A&7))^Math.floor(A/(2**(5^(A&7)))))^6)&7)
+        A = Math.floor(A/8)
+        console.log("A is: " + A)
+    }
+}
+
+//solve2(136934160596991)
+
+//console.log(1020238)
+
+//2**3 = 8
+
+//console.log((8**16/8**9)*61156655)
+
+//console.log(8**16)
+
+// 2/2**
+
+//I have no idea how to even approach this lol
