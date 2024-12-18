@@ -92,6 +92,7 @@ function solve(input, instructions) {
     updateOperands()
     let pointer = 0;
     let output = ''
+    console.log(instructions)
     
     while (true) {
         if (pointer >= instructions.length) {
