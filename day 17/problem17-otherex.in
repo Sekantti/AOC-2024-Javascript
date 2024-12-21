@@ -1,8 +1,0 @@
-Register A: 117440
-Register B: 0
-Register C: 0
-
-Program: 0,3,5,4,3,0
-
-117440 is supposed the be the smallest value for which the program outputs itself start with 2024
-8290304

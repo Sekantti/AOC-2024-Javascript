@@ -37,6 +37,8 @@ function possibleMoves([x, y], map) {
     return moves;
 }
 
+
+
 function findShortest(position, map) {
     const queue = []
     queue.push([position, 0])

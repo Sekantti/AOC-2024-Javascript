@@ -36,7 +36,7 @@ function updateOperands() {
 const opCodes = {
     0: function (operIn) {
         const operand = operands[operIn].combo
-        registers["A"] = registers["A"] >> operand
+        registers["A"] = Math.floor(registers["A"] / (2 ** operand))
         return -1
     },
     1: function (operIn) {
@@ -67,12 +67,12 @@ const opCodes = {
     },
     6: function (operIn) {
         const operand = operands[operIn].combo
-        registers["B"] = registers["A"] >> operand
+        registers["B"] = Math.floor(registers["A"] / (2 ** operand))
         return -1;
     },
     7: function (operIn) {
         const operand = operands[operIn].combo
-        registers["C"] = registers["A"] >> operand
+        registers["C"] = Math.floor(registers["A"] / (2 ** operand))
         return -1;
     }
 }

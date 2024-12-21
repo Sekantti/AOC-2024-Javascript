@@ -19,73 +19,60 @@ function prettyPrint(map) {
     return map.map((row) => {return row.join('')}).join('\n')
 }
 
-function possibleMoves([x, y], map) {
-    const moves = [] 
+function nextMove([x, y], map) {
     if (x > 0 && map[x-1][y] !== '#') {
-        moves.push([x-1, y])
+        return [x-1, y]
     }
     if (x < map.length -1 && map[x+1][y] !== '#') {
-        moves.push([x+1, y])
+        return [x+1, y]
     }
     if (y > 0 && map[x][y-1] !== '#') {
-        moves.push([x, y-1])
+        return [x, y-1]
     }
     if (y < map[0].length -1 && map[x][y+1] !== '#') {
-        moves.push([x, y+1])
+        return [x, y+1]
     }
-
-    return moves;
 }
 
-function possibleMovesCheat([x, y], map, cheatCounter) {
-    const moves = [] 
-    if (x > 0 && map[x-1][y] !== '#') {
-        moves.push([x-1, y])
-    }
-    if (x < map.length -1 && map[x+1][y] !== '#') {
-        moves.push([x+1, y])
-    }
-    if (y > 0 && map[x][y-1] !== '#') {
-        moves.push([x, y-1])
-    }
-    if (y < map[0].length -1 && map[x][y+1] !== '#') {
-        moves.push([x, y+1])
-    }
-
-    return moves;
-}
-
-function findShortest(position, map) {
-    const queue = []
-    queue.push([position, 0])
-
-    while (true) {
-        const [[x, y], steps] = queue.shift()
-
-        if (map[x][y] === 'E') {
-            return steps
+function findPath([x, y], inputMap) {
+    const map = structuredClone(inputMap)
+    const path = []
+    path[0] = {loc: [x, y], dist: 0}
+    map[x][y] = '#'
+    for (let i = 1; i < map.length*map[0].length; i++) {
+        const [newX, newY] = nextMove(path[path.length-1].loc, map)
+        path[i] = {loc: [newX, newY], dist: i}
+        if (map[newX][newY] === 'E') {
+            return path
         }
-
-        map[x][y] = '#'
-        const moves = possibleMoves([x, y], map)
-        moves.forEach((move) => { queue.push([move, steps+1])})
+        map[newX][newY] = '#'
     }
 }
 
-function solve(map, initialPosition, difference) {
-    let result = 0;
-    const target = findShortest(initialPosition, structuredClone(map)) - difference;
-    //for now, let's be dumb, and just cut through every possible wall.
+function distance([x1, y1], [x2, y2]) {
+    return Math.abs(x1-x2)+Math.abs(y1-y2)
+}
 
-    for (let i = 1; i < map.length-1; i++) {
-        for (let j = 1; j < map[0].length-1; j++) {
-            if (map[i][j] === '#') {
-                const newMap = structuredClone(map);
-                newMap[i][j] = '.';
-                const newPath = findShortest(initialPosition, newMap)
-                if (newPath <= target) {
-                    result++;
-                }
+function calculateCheat(loc1, loc2, targetDist) {
+    const [x1, y1] = loc1.loc
+    const [x2, y2] = loc2.loc
+    const dist = distance([x1, y1], [x2, y2])
+
+    if (dist <= targetDist) {
+        return Math.abs(loc1.dist-loc2.dist) - dist
+    }
+
+    return false
+}
+
+function calculateCheats(initialPosition, map, target, dist) {
+    const path = findPath(initialPosition, map)
+    let result = 0;
+
+    for (let i = 0; i < path.length; i++) {
+        for (let j = i+1; j < path.length; j++) {
+            if (calculateCheat(path[i], path[j], dist) >= target) {
+                result++
             }
         }
     }
@@ -93,4 +80,4 @@ function solve(map, initialPosition, difference) {
     return result;
 }
 
-console.log(solve(map, initialPosition, 100))
+console.log(calculateCheats(initialPosition, map, 100, 20))
