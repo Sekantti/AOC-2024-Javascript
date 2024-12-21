@@ -15,35 +15,42 @@ const beginsWith = {
     'g': available.filter((pattern) => pattern.startsWith('g'))
 }
 
+//maybe dfs?
+//"Hello".substring(0, 3) returns 'hel'. "Hello".length returns 5 
+
 const cache = {}
 
-function isPossibleCached(desired) {
+//isPossible takes in the desired pattern, and outputs how many ways that pattern can be achieved.
+function countPossibleCached(desired) {
     if (desired in cache) {
         return cache[desired];
     }
-    const result = isPossible(desired);
+    const result = countPossible(desired);
     cache[desired] = result;
     return result
 }
 
-function isPossible(desired) {
+//isPossible takes in the desired pattern, and outputs how many ways that pattern can be achieved.
+function countPossible(desired) {
     if (desired === "") {
-        return true;
+        return 1;
     }
     const possibleNext = beginsWith[desired[0]]
+    let result = 0;
     for (let next of possibleNext) {
-        if (desired.startsWith(next) && isPossibleCached(desired.substring(next.length))) {
-            return true;
+        if (desired.startsWith(next)) {
+            result += countPossibleCached(desired.substring(next.length))
         }
     }
-    return false;
+    return result;
 }
+
 
 function solve(desired) {
     let result = 0
 
     desired.forEach((pattern) => {
-        result += isPossible(pattern) ? 1 : 0
+        result += countPossible(pattern)
     })
 
     return result

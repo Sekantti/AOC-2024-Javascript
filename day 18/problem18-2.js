@@ -1,13 +1,13 @@
 import { readFileSync } from 'fs';
 
-const bytes = readFileSync('problem18-example.in', 'utf-8').split('\n').map((row) => {
+const bytes = readFileSync('problem18.in', 'utf-8').split('\n').map((row) => {
     return row.split(',')
 }).map((row) => row.map((num) => parseInt(num)))
 
-const size = 7 //change to 71 for full input
+const size = 71 //change to 71 for full input
 const end = [size - 1, size - 1]
 
-const map = new Array(size) //change tp 71 for full input
+const map = new Array(size)
 for (let i = 0; i < size; i++) {
     map[i] = new Array(size);
     for (let j = 0; j < size; j++) {
@@ -23,13 +23,13 @@ function fillMap(inputMap, bytes, num) {
     const map = structuredClone(inputMap)
 
     for (let i = 0; i < num; i++) {
-        //console.log(i)
         const [x, y] = bytes[i]
         map[x][y] = '#'
     }
 
     return map;
 }
+
 
 const queue = [] //will contain elements of the form [steps, position]
 
@@ -55,16 +55,20 @@ function validMovements([x, y], map) {
     return moves
 }
 
-function solve(inputMap, bytes, num) {
-    const map = fillMap(inputMap, bytes, num)
+function isPath(inputMap) {
+    const map = structuredClone(inputMap)
+    //fillMap(inputMap, bytes, num)
     insert(0, [0, 0])
     map[0][0] = '#'
 
     while (true) {
-        const [steps, [x, y]] = queue.shift()
+        if (queue.length === 0) {
+            return false;
+        }
 
+        const [steps, [x, y]] = queue.shift()
         if (x === map.length - 1 && y === map[0].length - 1) {
-            return steps;
+            return true;
         }
 
         const nextSteps = validMovements([x, y], map)
@@ -73,4 +77,17 @@ function solve(inputMap, bytes, num) {
     }
 }
 
-console.log(solve(map, bytes, bytes.length))
+function solve(inputMap, bytes, num) {
+    let map = fillMap(inputMap, bytes, num)
+
+    for (let i = num; i < bytes.length; i++) {
+        const [xB, yB] = bytes[i]
+        map[xB][yB] = '#'
+        if (!isPath(map)) {
+            return [xB, yB]
+        }
+    }
+
+}
+
+console.log(solve(map, bytes, 1024))
