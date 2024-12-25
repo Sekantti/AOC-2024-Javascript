@@ -66,7 +66,7 @@ function findZWires(operations, wires) {
 
 function solve(operations, wires) {
     const [zWires, length] = findZWires(operations, wires);
-    const result = new Array(length);
+    const result = [];
     
     for (let wire in zWires) {
         const index = parseInt(wire.match(/\d+/));

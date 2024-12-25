@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 
-const dirPad = {
+const combinedPad = {
     '7': [-3, 0],
     '8': [-3, 1],
     '9': [-3, 2],
@@ -67,8 +67,8 @@ function findShortestPath(path, robots) {
         return path.length
     }
 
-    const coords = [dirPad['A']]
-    coords.push(...path.split('').map((char) => { return dirPad[char]}))
+    const coords = [combinedPad['A']]
+    coords.push(...path.split('').map((char) => { return combinedPad[char]}))
     let result = 0
 
     for (let i = 0; i < coords.length-1; i++) {
