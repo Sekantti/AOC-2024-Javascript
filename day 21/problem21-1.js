@@ -21,10 +21,6 @@ const dirPad = {
 
 const codes = readFileSync('example.in', 'utf-8').split('\n')
 
-function distance([x1, y1], [x2, y2]) {
-    return [x1-x2, y1-y2]
-}
-
 function nextMove([x1, y1], [x2, y2]) {
     const [x, y] = [x1 - x2, y1  - y2]
     let result1 = ''
