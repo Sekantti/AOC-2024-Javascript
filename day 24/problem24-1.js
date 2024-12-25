@@ -8,20 +8,12 @@ input[0].split('\n').forEach((row) => {
     wires[wire] = parseInt(value)
 })
 
-const operationsType1 = {}
+const oeprations = {}
 input[1].split('\n').forEach((row) => {
     const [operation, output] = row.split(' -> ');
     const operator = operation.match(/(XOR|AND|OR)/g)[0]
     const wires = operation.split(/( XOR | AND | OR )/)
-    operationsType1[output] = { wires: [wires[0], wires[2]], operator: operator }
-})
-
-const operationsType2 = {}
-input[1].split('\n').forEach((row) => {
-    const [operation, output] = row.split(' -> ');
-    const operator = operation.match(/(XOR|AND|OR)/g)[0]
-    const wires = operation.split(/( XOR | AND | OR )/)
-    operationsType2[[wires[0], wires[2]]] = { wire: output, operation: operator }
+    oeprations[output] = { wires: [wires[0], wires[2]], operator: operator }
 })
 
 function operate(wire1, wire2, operator) {
@@ -84,4 +76,4 @@ function solve(operations, wires) {
     return parseInt(result.join(''), 2);
 }
 
-console.log(solve(operationsType1, wires))
+console.log(solve(oeprations, wires))
